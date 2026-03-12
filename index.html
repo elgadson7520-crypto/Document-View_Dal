@@ -5,13 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>SupplyOne Document Station — Dallas</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <style>
 :root{
-  --bg:#f5f2ed;--bg2:#eceae4;--card:#ffffff;
-  --red:#c8102e;--red-h:#e01538;--red-d:#9a0c23;--red-g:rgba(200,16,46,.12);
-  --blk:#111;--g9:#222;--g7:#444;--g5:#777;--g4:#999;--g3:#bbb;--g2:#d5d5d5;--g1:#e9e9e9;--wh:#fff;
+  --bg:#f0f3f8;--bg2:#e2e7f0;--card:#ffffff;
+  --red:#003594;--red-h:#0046c8;--red-d:#002570;--red-g:rgba(0,53,148,.10);
+  --blk:#111;--g7:#444;--g5:#777;--g3:#bbb;--g2:#d5d5d5;--g1:#e9e9e9;--wh:#fff;
   --tp:#1a1a1a;--ts:#555;--td:#888;
-  --brd:rgba(0,0,0,.07);--brds:rgba(0,0,0,.13);
+  --brd:rgba(0,0,0,.07);
   --sh1:0 1px 3px rgba(0,0,0,.05);--sh2:0 4px 14px rgba(0,0,0,.07);--sh3:0 10px 35px rgba(0,0,0,.12);--sh4:0 24px 60px rgba(0,0,0,.18);
   --r1:8px;--r2:12px;--r3:16px;
 }
@@ -19,127 +20,108 @@
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tp);min-height:100vh;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
 
 /* ─── HEADER ─── */
-.hdr{background:var(--wh);border-bottom:3px solid var(--red);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:66px;position:sticky;top:0;z-index:100;box-shadow:var(--sh2)}
+.hdr{background:#003594;border-bottom:3px solid #869397;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:66px;position:sticky;top:0;z-index:100;box-shadow:var(--sh2)}
 .hdr-brand{display:flex;align-items:center;gap:.9rem}
 .hdr-logo img{height:36px;display:block}
-.hdr-logo .fb{font-family:'Oswald',sans-serif;font-weight:700;font-size:1.35rem;color:var(--red);letter-spacing:1px;display:none}
-.hdr-logo .fb span{color:var(--blk)}
-.hdr-sep{width:1px;height:30px;background:var(--g2)}
-.hdr-ttl{font-family:'Oswald',sans-serif;font-weight:600;font-size:1.2rem;color:var(--blk);letter-spacing:.5px;text-transform:uppercase;line-height:1.1}
-.hdr-sub{font-size:.65rem;color:var(--td);letter-spacing:2px;text-transform:uppercase;font-weight:500}
+.hdr-logo .fb{font-family:'Oswald',sans-serif;font-weight:700;font-size:1.35rem;color:#ffffff;letter-spacing:1px;display:none}
+.hdr-logo .fb span{color:#869397}
+.hdr-sep{width:1px;height:30px;background:rgba(255,255,255,.25)}
+.hdr-ttl{font-family:'Oswald',sans-serif;font-weight:600;font-size:1.2rem;color:#ffffff;letter-spacing:.5px;text-transform:uppercase;line-height:1.1}
+.hdr-sub{font-size:.65rem;color:rgba(255,255,255,.65);letter-spacing:2px;text-transform:uppercase;font-weight:500}
 .hdr-act{display:flex;align-items:center;gap:.7rem}
-
-.lang-tog{display:flex;background:var(--bg2);border-radius:20px;padding:2px;border:1px solid var(--brd)}
-.lang-b{padding:5px 13px;border-radius:18px;border:none;background:none;font-family:'Oswald',sans-serif;font-weight:600;font-size:.78rem;letter-spacing:1px;color:var(--g5);cursor:pointer;transition:.25s;min-width:42px;min-height:30px;display:flex;align-items:center;justify-content:center}
-.lang-b.on{background:var(--red);color:#fff;box-shadow:0 2px 8px var(--red-g)}
-
-.sta-badge{background:var(--bg2);border:1px solid var(--brd);border-radius:20px;padding:5px 14px;font-size:.72rem;color:var(--ts);font-weight:600;display:flex;align-items:center;gap:6px;cursor:pointer;transition:.2s;min-height:34px}
-.sta-badge:hover{border-color:var(--red)}
+.lang-tog{display:flex;background:rgba(255,255,255,.15);border-radius:20px;padding:2px;border:1px solid var(--brd)}
+.lang-b{padding:5px 13px;border-radius:18px;border:none;background:none;font-family:'Oswald',sans-serif;font-weight:600;font-size:.78rem;letter-spacing:1px;color:rgba(255,255,255,.7);cursor:pointer;transition:.25s;min-width:42px;min-height:30px;display:flex;align-items:center;justify-content:center}
+.lang-b.on{background:var(--red);color:#fff}
+.sta-badge{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:5px 14px;font-size:.72rem;color:#fff;font-weight:600;display:flex;align-items:center;gap:6px;cursor:pointer;transition:.2s;min-height:34px}
+.sta-badge:hover{border-color:#869397}
 .sta-badge .dot{width:7px;height:7px;border-radius:50%;background:#22c55e;animation:pls 2s infinite}
 .sta-badge .dot.err{background:#ef4444;animation:none}
-.sta-badge .dot.loading{background:#f59e0b}
+.sta-badge .dot.loading{background:#f59e0b;animation:none}
 @keyframes pls{0%,100%{opacity:1}50%{opacity:.3}}
-
-.clk{font-family:'Oswald',sans-serif;font-size:1.1rem;color:var(--g7);font-weight:500;letter-spacing:1px;min-width:80px;text-align:right}
+.clk{font-family:'Oswald',sans-serif;font-size:1.1rem;color:#ffffff;font-weight:500;letter-spacing:1px;min-width:80px;text-align:right}
 
 /* ─── SYNC BAR ─── */
-.sync-bar{background:linear-gradient(135deg,var(--red-g),rgba(200,16,46,.05));border-bottom:1px solid rgba(200,16,46,.15);padding:.55rem 1.4rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.sync-bar{background:linear-gradient(135deg,var(--red-g),rgba(0,53,148,.05));border-bottom:1px solid rgba(0,53,148,.15);padding:.55rem 1.4rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
 .sync-info{display:flex;align-items:center;gap:.6rem;font-size:.75rem;color:var(--ts);font-weight:500}
-.sync-icon{font-size:.9rem}
 .sync-spin{display:inline-block;animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.sync-acts{display:flex;align-items:center;gap:.5rem}
-.sync-btn{padding:5px 14px;border-radius:20px;border:1px solid var(--red);background:var(--wh);color:var(--red);font-family:'DM Sans',sans-serif;font-size:.72rem;font-weight:600;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:5px;min-height:30px}
-.sync-btn:hover{background:var(--red);color:#fff}
+.sync-btn{padding:5px 14px;border-radius:20px;border:1px solid #869397;background:var(--wh);color:#003594;font-family:'DM Sans',sans-serif;font-size:.72rem;font-weight:600;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:5px;min-height:30px}
+.sync-btn:hover{background:#003594;color:#fff}
 .last-sync{font-size:.68rem;color:var(--td);font-weight:500}
 
 /* ─── LAYOUT ─── */
-.wrap{display:flex;height:calc(100vh - 66px)}
+.wrap{display:flex;height:calc(100vh - 66px - 44px)}
 
 /* ─── SIDEBAR ─── */
-.side{width:268px;min-width:268px;background:var(--wh);border-right:1px solid var(--brd);display:flex;flex-direction:column;overflow:hidden;box-shadow:2px 0 8px rgba(0,0,0,.02)}
+.side{width:268px;min-width:268px;background:var(--wh);border-right:1px solid var(--brd);display:flex;flex-direction:column;overflow:hidden}
 .side-sec{padding:1rem;border-bottom:1px solid var(--brd)}
-.side-lbl{font-family:'Oswald',sans-serif;font-size:.6rem;text-transform:uppercase;letter-spacing:2.5px;color:var(--td);margin-bottom:.6rem;font-weight:600}
-
-/* Drive Folder Info */
-.drive-info{background:var(--bg);border:1px solid var(--brd);border-radius:var(--r2);padding:.9rem;display:flex;flex-direction:column;gap:.5rem}
-.drive-row{display:flex;align-items:center;gap:.6rem}
-.drive-icon{width:32px;height:32px;background:rgba(66,133,244,.1);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.side-lbl{font-family:'Oswald',sans-serif;font-size:.6rem;text-transform:uppercase;letter-spacing:2.5px;color:#869397;margin-bottom:.6rem;font-weight:600}
+.drive-info{background:var(--bg);border:1px solid var(--brd);border-radius:var(--r2);padding:.9rem}
+.drive-row{display:flex;align-items:center;gap:.6rem;margin-bottom:.5rem}
+.drive-icon{width:32px;height:32px;background:rgba(0,53,148,.1);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
 .drive-text{flex:1;min-width:0}
 .drive-name{font-size:.8rem;font-weight:600;color:var(--tp);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .drive-id{font-size:.62rem;color:var(--td);font-family:monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .drive-status{display:flex;align-items:center;gap:5px;font-size:.7rem;color:var(--ts)}
 .drive-dot{width:6px;height:6px;border-radius:50%;background:#22c55e;flex-shrink:0}
 .drive-dot.err{background:#ef4444}
-
 .cat-list{display:flex;flex-direction:column;gap:2px}
 .cat-it{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:var(--r1);cursor:pointer;transition:.2s;font-size:.83rem;font-weight:500;color:var(--ts);min-height:42px}
 .cat-it:hover{background:var(--bg2)}
-.cat-it.on{background:var(--red-g);color:var(--red-d);font-weight:600}
+.cat-it.on{background:rgba(0,53,148,.10);color:#002570;font-weight:600}
 .cat-it .ci{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0}
 .cat-it .cc{margin-left:auto;font-size:.65rem;background:var(--bg2);padding:2px 7px;border-radius:10px;color:var(--td);font-weight:700;font-family:'Oswald',sans-serif}
-.cat-it.on .cc{background:rgba(200,16,46,.1);color:var(--red)}
-
+.cat-it.on .cc{background:rgba(0,53,148,.1);color:var(--red)}
 .side-ft{margin-top:auto;padding:.8rem 1rem;border-top:1px solid var(--brd)}
 .sto-info{font-size:.7rem;color:var(--td);margin-bottom:5px;font-weight:500}
 .sto-bar{height:4px;background:var(--g1);border-radius:4px;overflow:hidden}
-.sto-fill{height:100%;background:linear-gradient(90deg,var(--red),var(--red-h));border-radius:4px;transition:width .5s}
+.sto-fill{height:100%;background:linear-gradient(90deg,#003594,#869397);border-radius:4px;transition:width .5s}
 
 /* ─── CONTENT ─── */
 .cnt{flex:1;display:flex;flex-direction:column;overflow:hidden}
-
 .rec-bar{padding:.7rem 1.4rem;border-bottom:1px solid var(--brd);background:var(--wh);display:none}
 .rec-bar.has{display:block}
 .rec-row{display:flex;gap:7px;overflow-x:auto;padding-bottom:3px}
 .rec-chip{display:flex;align-items:center;gap:5px;background:var(--bg2);border:1px solid var(--brd);border-radius:18px;padding:5px 12px 5px 7px;cursor:pointer;transition:.2s;white-space:nowrap;flex-shrink:0;min-height:36px}
-.rec-chip:hover{border-color:var(--red);background:var(--red-g)}
+.rec-chip:hover{border-color:#003594;background:rgba(0,53,148,.08)}
 .rec-chip .rci{width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:.55rem;font-weight:700;font-family:'Oswald',sans-serif}
 .rec-chip .rcn{font-size:.75rem;font-weight:500;color:var(--tp);max-width:150px;overflow:hidden;text-overflow:ellipsis}
-
 .srch-bar{padding:.8rem 1.4rem;border-bottom:1px solid var(--brd);display:flex;align-items:center;gap:.7rem;background:var(--wh);flex-wrap:wrap}
 .srch-w{flex:1;position:relative;min-width:180px}
 .srch-w .si{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--td);font-size:.9rem}
 .srch-in{width:100%;background:var(--bg);border:1px solid var(--brd);border-radius:var(--r1);padding:9px 13px 9px 38px;color:var(--tp);font-family:'DM Sans',sans-serif;font-size:.86rem;outline:none;transition:.2s;min-height:42px}
-.srch-in:focus{border-color:var(--red);box-shadow:0 0 0 3px var(--red-g)}
+.srch-in:focus{border-color:#003594;box-shadow:0 0 0 3px rgba(0,53,148,.1)}
 .srch-in::placeholder{color:var(--td)}
-
 .vtog{display:flex;background:var(--bg);border-radius:var(--r1);overflow:hidden;border:1px solid var(--brd)}
 .vb{padding:7px 13px;cursor:pointer;color:var(--td);font-size:.95rem;transition:.2s;border:none;background:none;min-width:42px;min-height:42px;display:flex;align-items:center;justify-content:center}
-.vb.on{background:var(--red);color:#fff}
+.vb.on{background:#003594;color:#fff}
 .srt,.lf{background:var(--bg);border:1px solid var(--brd);border-radius:var(--r1);padding:7px 11px;color:var(--ts);font-family:'DM Sans',sans-serif;font-size:.78rem;outline:none;cursor:pointer;min-height:42px}
 
 /* ─── DOC GRID ─── */
 .dg{flex:1;overflow-y:auto;padding:1.2rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:.9rem;align-content:start}
 .dg.lv{grid-template-columns:1fr;gap:3px}
-
 .dc{background:var(--card);border:1px solid var(--brd);border-radius:var(--r2);padding:1.1rem;cursor:pointer;transition:.25s;position:relative;overflow:hidden;animation:ci .35s ease backwards;box-shadow:var(--sh1)}
-.dc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--red);opacity:0;transition:.25s}
-.dc:hover{border-color:rgba(200,16,46,.3);transform:translateY(-2px);box-shadow:var(--sh3)}
+.dc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#003594,#869397);opacity:0;transition:.25s}
+.dc:hover{border-color:rgba(0,53,148,.3);transform:translateY(-2px);box-shadow:var(--sh3)}
 .dc:hover::before{opacity:1}
 @keyframes ci{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-
 .dc .fi{width:44px;height:44px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1rem;margin-bottom:.6rem;font-weight:700;font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.5px}
 .dc .dn{font-weight:600;font-size:.86rem;color:var(--tp);margin-bottom:2px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .dc .dm{font-size:.68rem;color:var(--td);display:flex;align-items:center;gap:5px;margin-top:7px;flex-wrap:wrap}
 .dc .dm .tg{background:var(--bg2);padding:2px 7px;border-radius:4px;font-weight:600;color:var(--ts)}
 .dc .dm .lt{background:var(--blk);color:var(--wh);padding:1px 6px;border-radius:3px;font-weight:700;font-family:'Oswald',sans-serif;font-size:.58rem;letter-spacing:1px}
-.dc .dm .vt{color:var(--red);font-weight:600}
 .dc .ca{position:absolute;top:7px;right:7px;display:flex;gap:3px;opacity:0;transition:.2s}
 .dc:hover .ca{opacity:1}
 .ca button{width:30px;height:30px;border-radius:6px;border:none;background:var(--bg2);color:var(--g7);cursor:pointer;font-size:.75rem;display:flex;align-items:center;justify-content:center;transition:.2s}
-.ca button:hover{background:var(--red);color:#fff}
-
+.ca button:hover{background:#003594;color:#fff}
 .dg.lv .dc{display:flex;align-items:center;gap:.9rem;padding:.6rem .9rem;border-radius:var(--r1)}
 .dg.lv .dc .fi{width:34px;height:34px;margin-bottom:0;font-size:.7rem;flex-shrink:0}
 .dg.lv .dc .dn{flex:1;margin-bottom:0;-webkit-line-clamp:1}
 .dg.lv .dc .dm{margin-top:0}
-
 .es{grid-column:1/-1;text-align:center;padding:3.5rem 2rem;color:var(--td)}
 .es .ei{font-size:3.2rem;margin-bottom:.8rem;opacity:.3}
 .es h3{font-family:'Oswald',sans-serif;font-size:1.25rem;color:var(--ts);margin-bottom:.3rem;font-weight:600;text-transform:uppercase;letter-spacing:1px}
 .es p{font-size:.86rem;max-width:360px;margin:0 auto;line-height:1.6}
-
-/* Loading skeleton */
 .sk{background:linear-gradient(90deg,var(--g1) 25%,var(--g2) 50%,var(--g1) 75%);background-size:200% 100%;animation:sk 1.4s infinite;border-radius:6px}
 @keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
 .dc-sk{background:var(--card);border:1px solid var(--brd);border-radius:var(--r2);padding:1.1rem;box-shadow:var(--sh1)}
@@ -147,63 +129,92 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tp);min-h
 .dc-sk .sk-t{height:12px;border-radius:4px;margin-bottom:5px}
 .dc-sk .sk-s{height:10px;border-radius:4px;width:60%}
 
-/* ─── VIEWER ─── */
-.vo{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(5px);z-index:200;display:none;align-items:center;justify-content:center}
-.vo.on{display:flex}
-.vp{background:var(--wh);border:1px solid var(--brd);border-radius:var(--r3);width:92%;max-width:940px;max-height:88vh;display:flex;flex-direction:column;box-shadow:var(--sh4);animation:su .3s ease;overflow:hidden}
-@keyframes su{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
-.vp.fs{width:100%;max-width:100%;max-height:100%;border-radius:0;height:100vh}
+/* ════════════════════════════════════════
+   FULL SCREEN DOCUMENT VIEWER
+════════════════════════════════════════ */
+.viewer-overlay{position:fixed;inset:0;background:#001a4d;z-index:500;display:none;flex-direction:column}
+.viewer-overlay.on{display:flex}
 
-.vh{display:flex;align-items:center;gap:.9rem;padding:1rem 1.4rem;border-bottom:1px solid var(--brd);background:var(--bg)}
-.vh .fi{width:40px;height:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:700;font-family:'Oswald',sans-serif;text-transform:uppercase;flex-shrink:0}
-.vh .vt{flex:1;min-width:0}
-.vh .vt h2{font-family:'Oswald',sans-serif;font-size:1.1rem;font-weight:600;color:var(--blk);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.vh .vt span{font-size:.7rem;color:var(--td)}
-.vc{width:38px;height:38px;border-radius:var(--r1);border:1px solid var(--brd);background:var(--wh);color:var(--g7);cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:.2s}
-.vc:hover{background:var(--red);border-color:var(--red);color:#fff}
+/* Viewer Header */
+.viewer-hdr{background:#001133;border-bottom:2px solid #869397;padding:0 1.2rem;height:60px;display:flex;align-items:center;gap:1rem;flex-shrink:0}
+.viewer-hdr .vfi{width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;font-family:'Oswald',sans-serif;flex-shrink:0}
+.viewer-hdr .vtitle{flex:1;min-width:0}
+.viewer-hdr .vtitle h2{color:#fff;font-family:'Oswald',sans-serif;font-size:1rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.viewer-hdr .vtitle span{color:#888;font-size:.68rem}
+.viewer-hdr-acts{display:flex;align-items:center;gap:.5rem}
+.vh-btn{width:38px;height:38px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:#ccc;cursor:pointer;font-size:.9rem;display:flex;align-items:center;justify-content:center;transition:.2s}
+.vh-btn:hover{background:#003594;border-color:#869397;color:#fff}
+.vh-btn.close-btn{background:rgba(0,53,148,.2);border-color:rgba(0,53,148,.4);color:var(--red)}
+.vh-btn.close-btn:hover{background:var(--red);color:#fff}
 
-.vbdy{flex:1;overflow:auto;padding:1.4rem;display:flex;align-items:center;justify-content:center;min-height:260px;background:var(--bg)}
-.vbdy img{max-width:100%;max-height:60vh;border-radius:8px;box-shadow:var(--sh2)}
-.vbdy .pf{width:100%;height:60vh;border:none;border-radius:8px}
-.vbdy .np{text-align:center;color:var(--td)}
-.np .bi{font-size:3.2rem;margin-bottom:.8rem;opacity:.3}
-.np h3{font-family:'Oswald',sans-serif;color:var(--ts);font-size:1.1rem;margin-bottom:.3rem;text-transform:uppercase;letter-spacing:1px}
+/* Viewer Body */
+.viewer-body{flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;background:#002060}
 
-.vf{display:flex;align-items:center;justify-content:space-between;padding:.8rem 1.4rem;border-top:1px solid var(--brd);flex-wrap:wrap;gap:7px}
-.btn{padding:9px 18px;border-radius:var(--r1);border:none;font-family:'DM Sans',sans-serif;font-weight:600;font-size:.83rem;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:5px;min-height:42px}
-.btn-p{background:var(--red);color:#fff;box-shadow:0 2px 10px var(--red-g)}
-.btn-p:hover{background:var(--red-h);transform:translateY(-1px)}
-.btn-g{background:var(--bg2);color:var(--ts);border:1px solid var(--brd)}
-.btn-g:hover{background:var(--g1);color:var(--blk)}
+/* PDF Canvas Area */
+.pdf-wrap{display:flex;align-items:center;justify-content:center;width:100%;height:100%;overflow:auto;padding:1rem}
+.pdf-wrap canvas{display:block;box-shadow:0 8px 40px rgba(0,0,0,.6);border-radius:4px;max-width:100%;transition:opacity .3s}
 
-/* ─── CONFIG ─── */
-.cfo{position:fixed;inset:0;background:rgba(0,0,0,.4);backdrop-filter:blur(4px);z-index:250;display:none;align-items:center;justify-content:center}
+/* Image Viewer */
+.img-wrap{display:flex;align-items:center;justify-content:center;width:100%;height:100%;overflow:auto;padding:1rem}
+.img-wrap img{max-width:100%;max-height:100%;object-fit:contain;box-shadow:0 8px 40px rgba(0,0,0,.6);border-radius:4px}
+
+/* Office/Other embed */
+.embed-wrap{width:100%;height:100%}
+.embed-wrap iframe{width:100%;height:100%;border:none}
+
+/* Loading state */
+.viewer-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;color:#888}
+.viewer-loading .spin{width:48px;height:48px;border:3px solid rgba(255,255,255,.1);border-top-color:var(--red);border-radius:50%;animation:spin 1s linear infinite}
+.viewer-loading p{font-size:.9rem}
+
+/* Viewer Footer / Page Controls */
+.viewer-footer{background:#001133;border-top:1px solid rgba(255,255,255,.08);padding:.7rem 1.2rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-shrink:0}
+.page-nav{display:flex;align-items:center;gap:.6rem}
+.page-btn{width:44px;height:44px;border-radius:var(--r1);border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:#ccc;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;transition:.2s}
+.page-btn:hover:not(:disabled){background:#003594;border-color:#869397;color:#fff}
+.page-btn:disabled{opacity:.3;cursor:default}
+.page-counter{font-family:'Oswald',sans-serif;font-size:1rem;color:#fff;font-weight:600;min-width:100px;text-align:center;letter-spacing:.5px}
+.page-counter span{color:#888;font-size:.8rem;font-weight:400}
+.zoom-row{display:flex;align-items:center;gap:.5rem}
+.zoom-btn{width:36px;height:36px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:#ccc;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:.2s}
+.zoom-btn:hover{background:rgba(255,255,255,.15);color:#fff}
+.zoom-lbl{font-size:.78rem;color:#888;min-width:44px;text-align:center;font-family:'Oswald',sans-serif;font-weight:600}
+.viewer-footer-acts{display:flex;align-items:center;gap:.5rem}
+.vf-btn{padding:8px 16px;border-radius:var(--r1);border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:#ccc;font-family:'DM Sans',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:5px;min-height:38px}
+.vf-btn:hover{background:rgba(255,255,255,.15);color:#fff}
+.vf-btn.primary{background:#003594;border-color:#003594;color:#fff}
+.vf-btn.primary:hover{background:#0046c8}
+
+/* Config overlay */
+.cfo{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);z-index:600;display:none;align-items:center;justify-content:center}
 .cfo.on{display:flex}
-.cfp{background:var(--wh);border-radius:var(--r3);width:90%;max-width:420px;padding:1.8rem;box-shadow:var(--sh4);animation:su .3s ease;max-height:90vh;overflow-y:auto}
+.cfp{background:var(--wh);border-radius:var(--r3);width:90%;max-width:420px;padding:1.8rem;box-shadow:var(--sh4);max-height:90vh;overflow-y:auto}
 .cfp h3{font-family:'Oswald',sans-serif;font-size:1.15rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:1.1rem;color:var(--blk)}
 .cff{margin-bottom:.9rem}
 .cff label{display:block;font-size:.72rem;color:var(--td);font-weight:600;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:5px}
 .cff input,.cff select{width:100%;padding:9px 13px;border:1px solid var(--brd);border-radius:var(--r1);font-family:'DM Sans',sans-serif;font-size:.88rem;color:var(--tp);background:var(--bg);outline:none;min-height:42px}
-.cff input:focus,.cff select:focus{border-color:var(--red);box-shadow:0 0 0 3px var(--red-g)}
+.cff input:focus,.cff select:focus{border-color:#003594;box-shadow:0 0 0 3px rgba(0,53,148,.1)}
 .cff .hint{font-size:.68rem;color:var(--td);margin-top:4px}
 .cfa{display:flex;gap:7px;margin-top:1.3rem}
-.cfg-section{background:var(--bg);border-radius:var(--r1);padding:.8rem;margin-bottom:.9rem;border:1px solid var(--brd)}
-.cfg-section-title{font-size:.68rem;color:var(--red);font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:.6rem;font-family:'Oswald',sans-serif}
+.cfg-sec{background:var(--bg);border-radius:var(--r1);padding:.8rem;margin-bottom:.9rem;border:1px solid var(--brd)}
+.cfg-sec-t{font-size:.68rem;color:#003594;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:.6rem;font-family:'Oswald',sans-serif}
+.btn{padding:9px 18px;border-radius:var(--r1);border:none;font-family:'DM Sans',sans-serif;font-weight:600;font-size:.83rem;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:5px;min-height:42px}
+.btn-p{background:#003594;color:#fff}
+.btn-p:hover{background:#0046c8}
+.btn-g{background:var(--bg2);color:var(--ts);border:1px solid var(--brd)}
+.btn-g:hover{background:var(--g1)}
 
-/* ─── CPI BADGE ─── */
 .pby{position:fixed;bottom:14px;right:18px;z-index:50;display:flex;align-items:center;gap:6px;background:var(--wh);border:1px solid var(--brd);border-radius:20px;padding:5px 13px 5px 8px;box-shadow:var(--sh2);font-size:.65rem;color:var(--td);font-weight:500}
 .pby .cm{width:24px;height:24px;background:var(--blk);border-radius:5px;display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Oswald',sans-serif;font-weight:700;font-size:.55rem;letter-spacing:.5px}
 .pby strong{color:var(--tp);font-weight:700;font-family:'Oswald',sans-serif;font-size:.78rem;letter-spacing:.5px}
-
-.toast-c{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:300;display:flex;flex-direction:column;gap:7px;align-items:center}
+.toast-c{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:700;display:flex;flex-direction:column;gap:7px;align-items:center}
 .toast{background:var(--blk);border-radius:22px;padding:9px 20px;color:#fff;font-size:.83rem;font-weight:500;box-shadow:var(--sh3);animation:ti .35s ease,to .35s ease 2.5s forwards;white-space:nowrap}
 @keyframes ti{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 @keyframes to{from{opacity:1}to{opacity:0;transform:translateY(-10px)}}
-
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--g2);border-radius:3px}
-@media(max-width:768px){.side{display:none}.dg{grid-template-columns:repeat(auto-fill,minmax(155px,1fr));padding:.7rem}.hdr-ttl{font-size:.95rem}.hdr-sub{display:none}.srch-bar{padding:.6rem .8rem}}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:3px}
+@media(max-width:768px){.side{display:none}.dg{grid-template-columns:repeat(auto-fill,minmax(155px,1fr));padding:.7rem}.hdr-ttl{font-size:.95rem}.hdr-sub{display:none}.srch-bar{padding:.6rem .8rem}.viewer-hdr .vtitle h2{font-size:.85rem}}
 </style>
 </head>
 <body>
@@ -226,7 +237,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tp);min-h
       <button class="lang-b on" id="lEN" onclick="setLang('en')">EN</button>
       <button class="lang-b" id="lES" onclick="setLang('es')">ES</button>
     </div>
-    <div class="sta-badge" onclick="openCfg()" title="Configure Station">
+    <div class="sta-badge" onclick="openCfg()">
       <span class="dot" id="staDot"></span>
       <span id="staBdg">Connecting...</span>
     </div>
@@ -234,14 +245,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tp);min-h
   </div>
 </header>
 
-<!-- Sync Bar -->
 <div class="sync-bar">
   <div class="sync-info">
-    <span class="sync-icon" id="syncIcon">☁️</span>
+    <span id="syncIcon">☁️</span>
     <span id="syncMsg">Loading documents from Google Drive...</span>
     <span class="last-sync" id="lastSync"></span>
   </div>
-  <div class="sync-acts">
+  <div style="display:flex;gap:.5rem">
     <button class="sync-btn" onclick="syncDrive()">🔄 Refresh</button>
   </div>
 </div>
@@ -255,7 +265,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tp);min-h
           <div class="drive-icon">📁</div>
           <div class="drive-text">
             <div class="drive-name" id="driveFolderName">SRPACK Documents_Dallas</div>
-            <div class="drive-id" id="driveFolderId">1nBtojgdv941Tn3eAt6UqW-XrMTQN9YLf</div>
+            <div class="drive-id" id="driveFolderId">Loading...</div>
           </div>
         </div>
         <div class="drive-status">
@@ -303,25 +313,59 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tp);min-h
   </main>
 </div>
 
-<!-- Viewer -->
-<div class="vo" id="vOver" onclick="clsVOut(event)">
-  <div class="vp" id="vPan">
-    <div class="vh">
-      <div class="fi" id="vIco"></div>
-      <div class="vt">
-        <h2 id="vNam">Document</h2>
-        <span id="vMet"></span>
-      </div>
-      <button class="vc" onclick="togFS()" title="Fullscreen">⛶</button>
-      <button class="vc" onclick="clsV()">✕</button>
+<!-- ═══ FULL SCREEN VIEWER ═══ -->
+<div class="viewer-overlay" id="viewerOverlay">
+  <div class="viewer-hdr">
+    <div class="vfi" id="vHdrIco"></div>
+    <div class="vtitle">
+      <h2 id="vHdrName">Document</h2>
+      <span id="vHdrMeta"></span>
     </div>
-    <div class="vbdy" id="vBdy"></div>
-    <div class="vf">
-      <div style="display:flex;gap:5px;flex-wrap:wrap">
-        <button class="btn btn-g" onclick="openInDrive()">🔗 Open in Drive</button>
-        <button class="btn btn-g" onclick="prDoc()">🖨 Print</button>
+    <div class="viewer-hdr-acts">
+      <button class="vh-btn" onclick="dlCur()" title="Download">⬇</button>
+      <button class="vh-btn close-btn" onclick="closeViewer()" title="Close (Esc)">✕</button>
+    </div>
+  </div>
+
+  <div class="viewer-body" id="viewerBody">
+    <div class="viewer-loading" id="viewerLoading">
+      <div class="spin"></div>
+      <p>Loading document...</p>
+    </div>
+    <div class="pdf-wrap" id="pdfWrap" style="display:none">
+      <canvas id="pdfCanvas"></canvas>
+    </div>
+    <div class="img-wrap" id="imgWrap" style="display:none">
+      <img id="viewerImg" src="" alt="">
+    </div>
+    <div class="embed-wrap" id="embedWrap" style="display:none">
+      <iframe id="viewerFrame" src="" allow="autoplay" allowfullscreen></iframe>
+    </div>
+  </div>
+
+  <div class="viewer-footer">
+    <!-- Page Navigation -->
+    <div class="page-nav" id="pageNav">
+      <button class="page-btn" id="btnFirst" onclick="goPage(1)" title="First Page">⏮</button>
+      <button class="page-btn" id="btnPrev" onclick="goPage(curPage-1)" title="Previous Page">◀</button>
+      <div class="page-counter">
+        <span id="pageNum">1</span> <span>of</span> <span id="pageTot">1</span>
       </div>
-      <button class="btn btn-p" id="vDL">⬇ Download</button>
+      <button class="page-btn" id="btnNext" onclick="goPage(curPage+1)" title="Next Page">▶</button>
+      <button class="page-btn" id="btnLast" onclick="goPage(totalPages)" title="Last Page">⏭</button>
+    </div>
+
+    <!-- Zoom Controls -->
+    <div class="zoom-row" id="zoomRow">
+      <button class="zoom-btn" onclick="adjustZoom(-0.15)">−</button>
+      <span class="zoom-lbl" id="zoomLbl">100%</span>
+      <button class="zoom-btn" onclick="adjustZoom(0.15)">+</button>
+      <button class="zoom-btn" onclick="fitZoom()" title="Fit to screen">⤢</button>
+    </div>
+
+    <!-- Footer Actions -->
+    <div class="viewer-footer-acts">
+      <button class="vf-btn" onclick="dlCur()">⬇ Download</button>
     </div>
   </div>
 </div>
@@ -330,12 +374,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tp);min-h
 <div class="cfo" id="cfOver" onclick="clsCfOut(event)">
   <div class="cfp">
     <h3>⚙️ Station Configuration</h3>
-
-    <div class="cfg-section">
-      <div class="cfg-section-title">🏭 Station Identity</div>
+    <div class="cfg-sec">
+      <div class="cfg-sec-t">🏭 Station Identity</div>
       <div class="cff"><label>Station Name</label><input type="text" id="cfN" placeholder="e.g. Line 1 - Flexo"></div>
-      <div class="cff">
-        <label>Facility</label>
+      <div class="cff"><label>Facility</label>
         <select id="cfF">
           <option value="Dallas Plant" selected>Dallas Plant</option>
           <option value="OKC Plant">Oklahoma City Plant</option>
@@ -345,21 +387,18 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tp);min-h
       </div>
       <div class="cff"><label>Region</label><input type="text" id="cfR" value="Southwest Region"></div>
     </div>
-
-    <div class="cfg-section">
-      <div class="cfg-section-title">☁️ Google Drive Settings</div>
+    <div class="cfg-sec">
+      <div class="cfg-sec-t">☁️ Google Drive Settings</div>
       <div class="cff">
         <label>Folder ID</label>
-        <input type="text" id="cfFolderID" placeholder="Paste Google Drive Folder ID">
-        <div class="hint">From the Drive URL: drive.google.com/drive/folders/<strong>FOLDER_ID</strong></div>
+        <input type="text" id="cfFolderID" placeholder="Google Drive Folder ID">
+        <div class="hint">From the Drive URL after /folders/</div>
       </div>
       <div class="cff">
         <label>API Key</label>
         <input type="text" id="cfApiKey" placeholder="Google API Key">
-        <div class="hint">From Google Cloud Console → Credentials</div>
       </div>
-      <div class="cff">
-        <label>Auto-Refresh Interval</label>
+      <div class="cff"><label>Auto-Refresh</label>
         <select id="cfRefresh">
           <option value="0">Manual only</option>
           <option value="60" selected>Every 1 minute</option>
@@ -368,7 +407,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tp);min-h
         </select>
       </div>
     </div>
-
     <div class="cfa">
       <button class="btn btn-p" onclick="saveCfg()" style="flex:1;justify-content:center">✓ Save & Sync</button>
       <button class="btn btn-g" onclick="clsCf()">Cancel</button>
@@ -381,7 +419,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tp);min-h
   <span>Powered by</span>
   <strong>CPI</strong>
 </div>
-
 <div class="toast-c" id="toastC"></div>
 
 <script>
@@ -390,217 +427,133 @@ const DRIVE_CONFIG = {
   apiKey: 'AIzaSyB-zWp10m_FMko-XTuX0JbjTddCEcI2tcc',
   folderId: '1nBtojgdv941Tn3eAt6UqW-XrMTQN9YLf',
   folderName: 'SRPACK Documents_Dallas',
-  refreshInterval: 60 // seconds
+  refreshInterval: 60
 };
+
+// PDF.js setup
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
 // ═══ STATE ═══
-let docs = [], cFilt = 'all', cView = 'grid', cVI = -1, recent = [], isFS = false;
-let cfg = { name: '', facility: 'Dallas Plant', region: 'Southwest Region' };
-let refreshTimer = null;
-let cLang = 'en';
+let docs = [], cFilt = 'all', cView = 'grid', recent = [], cLang = 'en';
+let refreshTimer = null, cVI = -1;
+// PDF state
+let pdfDoc = null, curPage = 1, totalPages = 1, curZoom = 1.2, isRendering = false;
 const $ = id => document.getElementById(id);
 
-// ═══ FILE TYPE MAP ═══
+// ═══ FILE TYPES ═══
 const FI = {
-  pdf:  { b:'rgba(211,47,47,.1)',  c:'#d32f2f', l:'PDF' },
-  doc:  { b:'rgba(33,150,243,.1)', c:'#2196f3', l:'DOC' },
-  docx: { b:'rgba(33,150,243,.1)', c:'#2196f3', l:'DOC' },
-  xls:  { b:'rgba(56,142,60,.1)',  c:'#388e3c', l:'XLS' },
-  xlsx: { b:'rgba(56,142,60,.1)',  c:'#388e3c', l:'XLS' },
-  ppt:  { b:'rgba(239,108,0,.1)',  c:'#ef6c00', l:'PPT' },
-  pptx: { b:'rgba(239,108,0,.1)',  c:'#ef6c00', l:'PPT' },
-  png:  { b:'rgba(142,36,170,.1)', c:'#8e24aa', l:'PNG' },
-  jpg:  { b:'rgba(142,36,170,.1)', c:'#8e24aa', l:'JPG' },
-  jpeg: { b:'rgba(142,36,170,.1)', c:'#8e24aa', l:'JPG' },
-  gif:  { b:'rgba(142,36,170,.1)', c:'#8e24aa', l:'GIF' },
-  svg:  { b:'rgba(142,36,170,.1)', c:'#8e24aa', l:'SVG' },
-  txt:  { b:'rgba(117,117,117,.1)', c:'#757575', l:'TXT' },
-  csv:  { b:'rgba(56,142,60,.1)',  c:'#388e3c', l:'CSV' },
-  html: { b:'rgba(230,74,25,.1)',  c:'#e64a19', l:'HTM' },
-  zip:  { b:'rgba(93,64,55,.1)',   c:'#5d4037', l:'ZIP' },
-  mp4:  { b:'rgba(0,121,107,.1)',  c:'#00796b', l:'MP4' },
-  mov:  { b:'rgba(0,121,107,.1)',  c:'#00796b', l:'MOV' }
+  pdf:  {b:'rgba(211,47,47,.1)', c:'#d32f2f',l:'PDF'},
+  doc:  {b:'rgba(33,150,243,.1)',c:'#2196f3',l:'DOC'},
+  docx: {b:'rgba(33,150,243,.1)',c:'#2196f3',l:'DOC'},
+  xls:  {b:'rgba(56,142,60,.1)', c:'#388e3c',l:'XLS'},
+  xlsx: {b:'rgba(56,142,60,.1)', c:'#388e3c',l:'XLS'},
+  ppt:  {b:'rgba(239,108,0,.1)', c:'#ef6c00',l:'PPT'},
+  pptx: {b:'rgba(239,108,0,.1)', c:'#ef6c00',l:'PPT'},
+  png:  {b:'rgba(142,36,170,.1)',c:'#8e24aa',l:'PNG'},
+  jpg:  {b:'rgba(142,36,170,.1)',c:'#8e24aa',l:'JPG'},
+  jpeg: {b:'rgba(142,36,170,.1)',c:'#8e24aa',l:'JPG'},
+  gif:  {b:'rgba(142,36,170,.1)',c:'#8e24aa',l:'GIF'},
+  svg:  {b:'rgba(142,36,170,.1)',c:'#8e24aa',l:'SVG'},
+  txt:  {b:'rgba(117,117,117,.1)',c:'#757575',l:'TXT'},
+  csv:  {b:'rgba(56,142,60,.1)', c:'#388e3c',l:'CSV'},
+  html: {b:'rgba(230,74,25,.1)', c:'#e64a19',l:'HTM'},
+  zip:  {b:'rgba(93,64,55,.1)',  c:'#5d4037',l:'ZIP'},
+  mp4:  {b:'rgba(0,121,107,.1)', c:'#00796b',l:'MP4'},
 };
-
-// Google MIME to extension map
 const GMIME = {
-  'application/pdf': 'pdf',
-  'application/msword': 'doc',
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx',
-  'application/vnd.ms-excel': 'xls',
-  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'xlsx',
-  'application/vnd.ms-powerpoint': 'ppt',
-  'application/vnd.openxmlformats-officedocument.presentationml.presentation': 'pptx',
-  'image/png': 'png', 'image/jpeg': 'jpg', 'image/gif': 'gif', 'image/svg+xml': 'svg',
-  'text/plain': 'txt', 'text/csv': 'csv', 'text/html': 'html',
-  'video/mp4': 'mp4', 'video/quicktime': 'mov',
-  'application/zip': 'zip',
-  // Google Docs native
-  'application/vnd.google-apps.document': 'docx',
-  'application/vnd.google-apps.spreadsheet': 'xlsx',
-  'application/vnd.google-apps.presentation': 'pptx'
+  'application/pdf':'pdf','application/msword':'doc',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document':'docx',
+  'application/vnd.ms-excel':'xls',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':'xlsx',
+  'application/vnd.ms-powerpoint':'ppt',
+  'application/vnd.openxmlformats-officedocument.presentationml.presentation':'pptx',
+  'image/png':'png','image/jpeg':'jpg','image/gif':'gif','image/svg+xml':'svg',
+  'text/plain':'txt','text/csv':'csv','text/html':'html','video/mp4':'mp4',
+  'application/vnd.google-apps.document':'docx',
+  'application/vnd.google-apps.spreadsheet':'xlsx',
+  'application/vnd.google-apps.presentation':'pptx'
 };
-
 const CATS = ['sop','safety','quality','training','other'];
 const CC = {
-  all:      { i:'📁', bg:'rgba(200,16,46,.08)',  c:'var(--red)' },
-  sop:      { i:'📋', bg:'rgba(56,142,60,.08)',  c:'#388e3c' },
-  safety:   { i:'⚠️', bg:'rgba(239,108,0,.08)', c:'#ef6c00' },
-  quality:  { i:'✅', bg:'rgba(33,150,243,.08)', c:'#2196f3' },
-  training: { i:'🎓', bg:'rgba(142,36,170,.08)', c:'#8e24aa' },
-  other:    { i:'📎', bg:'rgba(117,117,117,.08)',c:'#757575' }
+  all:     {i:'📁',bg:'rgba(0,53,148,.08)', c:'var(--red)'},
+  sop:     {i:'📋',bg:'rgba(56,142,60,.08)', c:'#388e3c'},
+  safety:  {i:'⚠️',bg:'rgba(239,108,0,.08)',c:'#ef6c00'},
+  quality: {i:'✅',bg:'rgba(33,150,243,.08)',c:'#2196f3'},
+  training:{i:'🎓',bg:'rgba(142,36,170,.08)',c:'#8e24aa'},
+  other:   {i:'📎',bg:'rgba(117,117,117,.08)',c:'#757575'}
 };
-
-const CAT_LABELS = {
-  all:'All Documents', sop:'SOPs & Procedures', safety:'Safety & Compliance',
-  quality:'Quality & Inspection', training:'Training Materials', other:'Other / General'
-};
-const CAT_SHORT = { sop:'SOP', safety:'Safety', quality:'Quality', training:'Training', other:'General' };
-
-// ═══ CLOCK ═══
-function updClk(){ $('clk').textContent = new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}); }
-setInterval(updClk, 1000); updClk();
+const CAT_LABELS={all:'All Documents',sop:'SOPs & Procedures',safety:'Safety & Compliance',quality:'Quality & Inspection',training:'Training Materials',other:'Other / General'};
+const CAT_SHORT={sop:'SOP',safety:'Safety',quality:'Quality',training:'Training',other:'General'};
 
 // ═══ HELPERS ═══
-function ext(n){ return (n.split('.').pop()||'').toLowerCase(); }
-function fi(e){ return FI[e] || {b:'rgba(117,117,117,.1)',c:'#757575',l:(e||'?').toUpperCase().substring(0,3)}; }
-function fmtSz(b){ if(!b||b<0)return '—'; if(b<1024)return b+' B'; if(b<1048576)return(b/1024).toFixed(1)+' KB'; return(b/1048576).toFixed(1)+' MB'; }
-function fmtDate(s){ return s ? new Date(s).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—'; }
+function getExt(n){ return (n.split('.').pop()||'').toLowerCase(); }
+function fi(e){ return FI[e]||{b:'rgba(117,117,117,.1)',c:'#757575',l:(e||'?').toUpperCase().substring(0,3)}; }
+function fmtSz(b){ if(!b||b<=0)return '—'; if(b<1024)return b+' B'; if(b<1048576)return(b/1024).toFixed(1)+' KB'; return(b/1048576).toFixed(1)+' MB'; }
+function fmtDate(s){ return s?new Date(s).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'—'; }
 function autoCat(n){ const l=n.toLowerCase(); if(/sop|procedure|work.instruction|process|instruc/.test(l))return'sop'; if(/safety|osha|hazard|msds|sds|lockout|loto|seguridad|peligro/.test(l))return'safety'; if(/quality|inspection|sqf|iso|audit|check|calidad|inspecci/.test(l))return'quality'; if(/training|onboard|guide|manual|capacitaci|entrenamiento/.test(l))return'training'; return'other'; }
 function autoLng(n){ if(/[_\-\s](es|esp|spanish)[._\-\s]/i.test(n)||/instruc|capacitaci|seguridad|calidad|procedimiento/.test(n.toLowerCase()))return'es'; return'en'; }
-function esc(t){ const d=document.createElement('div'); d.textContent=t; return d.innerHTML; }
-function toast(m){ const c=$('toastC'),e=document.createElement('div'); e.className='toast'; e.textContent=m; c.appendChild(e); setTimeout(()=>e.remove(),3000); }
-function isGoogleNative(mimeType){ return mimeType && mimeType.startsWith('application/vnd.google-apps.'); }
+function esc(t){ const d=document.createElement('div');d.textContent=t;return d.innerHTML; }
+function toast(m){ const c=$('toastC'),e=document.createElement('div');e.className='toast';e.textContent=m;c.appendChild(e);setTimeout(()=>e.remove(),3000); }
+function isNativeDrive(mt){ return mt&&mt.startsWith('application/vnd.google-apps.'); }
+function isImg(ext){ return ['png','jpg','jpeg','gif','svg','webp'].includes(ext); }
 
-// ═══ GOOGLE DRIVE SYNC ═══
+// ═══ CLOCK ═══
+function updClk(){ $('clk').textContent=new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}); }
+setInterval(updClk,1000); updClk();
+
+// ═══ SYNC ═══
 async function syncDrive(){
-  const icon = $('syncIcon');
-  const msg  = $('syncMsg');
-  const dot  = $('staDot');
-  const bdg  = $('staBdg');
-  const ddot = $('driveDot');
-  const dst  = $('driveStatus');
-
-  icon.classList.add('sync-spin');
-  icon.textContent = '🔄';
-  msg.textContent = 'Syncing with Google Drive...';
-  dot.className = 'dot loading';
-  bdg.textContent = 'Syncing...';
-  ddot.className = 'drive-dot';
-  dst.textContent = 'Connecting...';
-
+  const icon=$('syncIcon'),msg=$('syncMsg'),dot=$('staDot'),bdg=$('staBdg'),ddot=$('driveDot'),dst=$('driveStatus');
+  icon.classList.add('sync-spin'); icon.textContent='🔄';
+  msg.textContent='Syncing with Google Drive...';
+  dot.className='dot loading'; bdg.textContent='Syncing...';
+  ddot.className='drive-dot'; dst.textContent='Connecting...';
   showSkeletons();
-
-  const fId  = DRIVE_CONFIG.folderId;
-  const aKey = DRIVE_CONFIG.apiKey;
-
   try {
-    const fields = 'files(id,name,size,mimeType,createdTime,modifiedTime,webViewLink,webContentLink)';
-    const q = encodeURIComponent(`'${fId}' in parents and trashed=false`);
-    const url = `https://www.googleapis.com/drive/v3/files?q=${q}&key=${aKey}&fields=${fields}&pageSize=100&orderBy=modifiedTime+desc`;
-
-    const res = await fetch(url);
-    if(!res.ok){
-      const err = await res.json();
-      throw new Error(err.error?.message || 'Drive API error');
-    }
-    const data = await res.json();
-    const files = data.files || [];
-
-    docs = files.map(f => {
-      const fileExt = isGoogleNative(f.mimeType) ? (GMIME[f.mimeType]||'docx') : (ext(f.name) || (GMIME[f.mimeType]||'bin'));
-      return {
-        id: f.id,
-        name: f.name,
-        size: parseInt(f.size)||0,
-        mimeType: f.mimeType,
-        ext: fileExt,
-        category: autoCat(f.name),
-        docLang: autoLng(f.name),
-        uploaded: f.modifiedTime || f.createdTime,
-        viewLink: f.webViewLink,
-        dlLink: f.webContentLink,
-        isNative: isGoogleNative(f.mimeType)
-      };
+    const fields='files(id,name,size,mimeType,createdTime,modifiedTime,webViewLink,webContentLink)';
+    const q=encodeURIComponent(`'${DRIVE_CONFIG.folderId}' in parents and trashed=false`);
+    const url=`https://www.googleapis.com/drive/v3/files?q=${q}&key=${DRIVE_CONFIG.apiKey}&fields=${fields}&pageSize=200&orderBy=modifiedTime+desc`;
+    const res=await fetch(url);
+    if(!res.ok){ const err=await res.json(); throw new Error(err.error?.message||'Drive API error '+res.status); }
+    const data=await res.json();
+    docs=(data.files||[]).map(f=>{
+      const fileExt=isNativeDrive(f.mimeType)?(GMIME[f.mimeType]||'docx'):(getExt(f.name)||(GMIME[f.mimeType]||'bin'));
+      return {id:f.id,name:f.name,size:parseInt(f.size)||0,mimeType:f.mimeType,ext:fileExt,
+              category:autoCat(f.name),docLang:autoLng(f.name),uploaded:f.modifiedTime||f.createdTime,
+              viewLink:f.webViewLink,dlLink:f.webContentLink,isNative:isNativeDrive(f.mimeType)};
     });
-
-    // Update UI
-    icon.classList.remove('sync-spin');
-    icon.textContent = '✅';
-    const now = new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
-    msg.textContent = `${docs.length} document${docs.length!==1?'s':''} loaded from Google Drive`;
-    $('lastSync').textContent = `Last sync: ${now}`;
-    dot.className = 'dot';
-    bdg.textContent = 'Station Online';
-    ddot.className = 'drive-dot';
-    dst.textContent = `${docs.length} files synced`;
-    $('driveFolderName').textContent = DRIVE_CONFIG.folderName;
-    $('driveFolderId').textContent = fId.substring(0,20)+'...';
-
-    render();
-    updCounts();
-    renderRec();
-    saveLocal();
-
-    // Schedule next refresh
+    icon.classList.remove('sync-spin'); icon.textContent='✅';
+    const now=new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+    msg.textContent=`${docs.length} document${docs.length!==1?'s':''} loaded from Google Drive`;
+    $('lastSync').textContent=`Last sync: ${now}`;
+    dot.className='dot'; bdg.textContent='Station Online';
+    ddot.className='drive-dot'; dst.textContent=`${docs.length} files synced`;
+    $('driveFolderName').textContent=DRIVE_CONFIG.folderName;
+    $('driveFolderId').textContent=DRIVE_CONFIG.folderId.substring(0,22)+'...';
+    render(); updCounts(); renderRec(); saveLocal();
     startAutoRefresh();
-
-  } catch(err) {
-    console.error('Drive sync error:', err);
-    icon.classList.remove('sync-spin');
-    icon.textContent = '❌';
-    msg.textContent = 'Sync failed: ' + err.message;
-    dot.className = 'dot err';
-    bdg.textContent = 'Sync Error';
-    ddot.className = 'drive-dot err';
-    dst.textContent = 'Connection failed';
-
-    // Show cached docs if available
-    if(docs.length > 0){
-      render();
-      toast('Showing cached documents — check connection');
-    } else {
-      $('dGrid').innerHTML = `
-        <div class="es">
-          <div class="ei">❌</div>
-          <h3>Could Not Connect</h3>
-          <p style="font-size:.8rem;">${esc(err.message)}<br><br>Make sure your Google Drive folder is set to <strong>"Anyone with the link can view"</strong> and your API key is valid.</p>
-          <button class="btn btn-p" onclick="syncDrive()" style="margin-top:1rem;justify-content:center">🔄 Try Again</button>
-        </div>`;
-    }
+  } catch(err){
+    console.error('Drive sync error:',err);
+    icon.classList.remove('sync-spin'); icon.textContent='❌';
+    msg.textContent='Sync failed: '+err.message;
+    dot.className='dot err'; bdg.textContent='Sync Error';
+    ddot.className='drive-dot err'; dst.textContent='Connection failed';
+    if(docs.length>0){ render(); toast('Showing cached — check connection'); }
+    else { $('dGrid').innerHTML=`<div class="es"><div class="ei">❌</div><h3>Could Not Connect</h3><p>${esc(err.message)}<br><br>Check your API key, Folder ID, and make sure the folder is set to "Anyone with the link can view".</p><button class="btn btn-p" onclick="syncDrive()" style="margin-top:1rem;justify-content:center">🔄 Try Again</button></div>`; }
   }
 }
 
-function showSkeletons(){
-  const g = $('dGrid');
-  g.innerHTML = '';
-  for(let i=0;i<12;i++){
-    const d = document.createElement('div');
-    d.className = 'dc-sk';
-    d.style.animationDelay = i*.04+'s';
-    d.innerHTML = '<div class="sk sk-ico"></div><div class="sk sk-t" style="width:80%"></div><div class="sk sk-s"></div>';
-    g.appendChild(d);
-  }
-}
-
-function startAutoRefresh(){
-  if(refreshTimer) clearInterval(refreshTimer);
-  const interval = DRIVE_CONFIG.refreshInterval;
-  if(interval > 0){
-    refreshTimer = setInterval(syncDrive, interval * 1000);
-  }
-}
+function showSkeletons(){ const g=$('dGrid');g.innerHTML='';for(let i=0;i<12;i++){const d=document.createElement('div');d.className='dc-sk';d.innerHTML='<div class="sk sk-ico"></div><div class="sk sk-t" style="width:80%"></div><div class="sk sk-s"></div>';g.appendChild(d);} }
+function startAutoRefresh(){ if(refreshTimer)clearInterval(refreshTimer); if(DRIVE_CONFIG.refreshInterval>0) refreshTimer=setInterval(syncDrive,DRIVE_CONFIG.refreshInterval*1000); }
 
 // ═══ CATEGORIES ═══
 function buildCats(){
-  const list = $('catList');
-  list.innerHTML = '';
-  [{k:'all'},...CATS.map(c=>({k:c}))].forEach(cat => {
-    const cf = CC[cat.k];
-    const d = document.createElement('div');
-    d.className = 'cat-it' + (cFilt===cat.k?' on':'');
-    d.onclick = () => filtCat(cat.k, d);
-    d.innerHTML = `<div class="ci" style="background:${cf.bg};color:${cf.c};">${cf.i}</div>${CAT_LABELS[cat.k]}<span class="cc" id="cnt_${cat.k}">0</span>`;
+  const list=$('catList'); list.innerHTML='';
+  [{k:'all'},...CATS.map(c=>({k:c}))].forEach(cat=>{
+    const cf=CC[cat.k],d=document.createElement('div');
+    d.className='cat-it'+(cFilt===cat.k?' on':'');
+    d.onclick=()=>filtCat(cat.k,d);
+    d.innerHTML=`<div class="ci" style="background:${cf.bg};color:${cf.c};">${cf.i}</div>${CAT_LABELS[cat.k]}<span class="cc" id="cnt_${cat.k}">0</span>`;
     list.appendChild(d);
   });
   updCounts();
@@ -608,34 +561,28 @@ function buildCats(){
 
 // ═══ RENDER ═══
 function getFilt(){
-  let d = cFilt==='all' ? [...docs] : docs.filter(x=>x.category===cFilt);
-  const q = $('srchIn').value.toLowerCase().trim();
-  if(q) d = d.filter(x=>x.name.toLowerCase().includes(q)||(CAT_SHORT[x.category]||'').toLowerCase().includes(q));
-  const lf = $('lFilt').value;
-  if(lf!=='all') d = d.filter(x=>x.docLang===lf);
-  const s = $('srtSel').value;
-  if(s==='newest') d.sort((a,b)=>new Date(b.uploaded)-new Date(a.uploaded));
-  else if(s==='oldest') d.sort((a,b)=>new Date(a.uploaded)-new Date(b.uploaded));
-  else if(s==='name') d.sort((a,b)=>a.name.localeCompare(b.name));
+  let d=cFilt==='all'?[...docs]:docs.filter(x=>x.category===cFilt);
+  const q=$('srchIn').value.toLowerCase().trim();
+  if(q)d=d.filter(x=>x.name.toLowerCase().includes(q)||(CAT_SHORT[x.category]||'').toLowerCase().includes(q));
+  const lf=$('lFilt').value;
+  if(lf!=='all')d=d.filter(x=>x.docLang===lf);
+  const s=$('srtSel').value;
+  if(s==='newest')d.sort((a,b)=>new Date(b.uploaded)-new Date(a.uploaded));
+  else if(s==='oldest')d.sort((a,b)=>new Date(a.uploaded)-new Date(b.uploaded));
+  else if(s==='name')d.sort((a,b)=>a.name.localeCompare(b.name));
   return d;
 }
-
 function render(){
-  const g = $('dGrid');
-  const d = getFilt();
-  if(!d.length && !docs.length){ g.innerHTML=`<div class="es"><div class="ei">📂</div><h3>No Documents Loaded</h3><p>Waiting for Google Drive sync. Click Refresh to load documents.</p></div>`; return; }
-  if(!d.length){ g.innerHTML=`<div class="es"><div class="ei">🔍</div><h3>No Matches</h3><p>Try a different search or category.</p></div>`; return; }
-  g.innerHTML = '';
-  d.forEach((doc, i) => {
-    const ri = docs.indexOf(doc);
-    const ic = fi(doc.ext);
-    const cd = document.createElement('div');
-    cd.className = 'dc';
-    cd.style.animationDelay = i*.03+'s';
-    cd.onclick = () => openV(ri);
-    cd.innerHTML = `
+  const g=$('dGrid'),d=getFilt();
+  if(!d.length&&!docs.length){g.innerHTML=`<div class="es"><div class="ei">📂</div><h3>No Documents Loaded</h3><p>Waiting for Google Drive sync. Click Refresh to load documents.</p></div>`;return;}
+  if(!d.length){g.innerHTML=`<div class="es"><div class="ei">🔍</div><h3>No Matches</h3><p>Try a different search or category.</p></div>`;return;}
+  g.innerHTML='';
+  d.forEach((doc,i)=>{
+    const ri=docs.indexOf(doc),ic=fi(doc.ext),cd=document.createElement('div');
+    cd.className='dc'; cd.style.animationDelay=i*.03+'s';
+    cd.onclick=()=>openViewer(ri);
+    cd.innerHTML=`
       <div class="ca">
-        <button title="Open in Drive" onclick="event.stopPropagation();window.open('${doc.viewLink}','_blank')">🔗</button>
         <button title="Download" onclick="event.stopPropagation();dlDoc(${ri})">⬇</button>
       </div>
       <div class="fi" style="background:${ic.b};color:${ic.c};">${ic.l}</div>
@@ -649,175 +596,253 @@ function render(){
     g.appendChild(cd);
   });
 }
-
-// ═══ COUNTS ═══
 function updCounts(){
-  const all = document.getElementById('cnt_all');
-  if(all) all.textContent = docs.length;
-  CATS.forEach(c=>{ const e=document.getElementById('cnt_'+c); if(e) e.textContent=docs.filter(d=>d.category===c).length; });
-  const ts = docs.reduce((s,d)=>s+(d.size||0),0);
-  $('stoTxt').textContent = docs.length+' doc'+(docs.length!==1?'s':'')+' — '+fmtSz(ts);
-  $('stoBar').style.width = Math.min(docs.length/50*100,100)+'%';
+  const a=document.getElementById('cnt_all'); if(a)a.textContent=docs.length;
+  CATS.forEach(c=>{const e=document.getElementById('cnt_'+c);if(e)e.textContent=docs.filter(d=>d.category===c).length;});
+  const ts=docs.reduce((s,d)=>s+(d.size||0),0);
+  $('stoTxt').textContent=docs.length+' doc'+(docs.length!==1?'s':'')+' — '+fmtSz(ts);
+  $('stoBar').style.width=Math.min(docs.length/50*100,100)+'%';
 }
-
-// ═══ FILTER/VIEW ═══
 function filtCat(c,el){ cFilt=c; document.querySelectorAll('.cat-it').forEach(x=>x.classList.remove('on')); if(el)el.classList.add('on'); render(); }
 function setVw(v){ cView=v; $('dGrid').classList.toggle('lv',v==='list'); $('gvb').classList.toggle('on',v==='grid'); $('lvb').classList.toggle('on',v==='list'); }
-$('srchIn').addEventListener('input', render);
+$('srchIn').addEventListener('input',render);
 function setLang(l){ cLang=l; $('lEN').classList.toggle('on',l==='en'); $('lES').classList.toggle('on',l==='es'); }
 
 // ═══ RECENT ═══
 function addRec(i){ const d=docs[i]; if(!d)return; recent=recent.filter(id=>id!==d.id); recent.unshift(d.id); if(recent.length>8)recent=recent.slice(0,8); renderRec(); saveLocal(); }
-function renderRec(){ const bar=$('recBar'),row=$('recRow'),rd=recent.map(id=>docs.find(d=>d.id===id)).filter(Boolean); if(!rd.length){bar.classList.remove('has');return;} bar.classList.add('has'); row.innerHTML=''; rd.forEach(doc=>{ const ri=docs.indexOf(doc),ic=fi(doc.ext),ch=document.createElement('div'); ch.className='rec-chip'; ch.onclick=()=>openV(ri); ch.innerHTML=`<div class="rci" style="background:${ic.b};color:${ic.c};">${ic.l}</div><span class="rcn">${esc(doc.name)}</span>`; row.appendChild(ch); }); }
+function renderRec(){
+  const bar=$('recBar'),row=$('recRow'),rd=recent.map(id=>docs.find(d=>d.id===id)).filter(Boolean);
+  if(!rd.length){bar.classList.remove('has');return;} bar.classList.add('has'); row.innerHTML='';
+  rd.forEach(doc=>{ const ri=docs.indexOf(doc),ic=fi(doc.ext),ch=document.createElement('div'); ch.className='rec-chip'; ch.onclick=()=>openViewer(ri); ch.innerHTML=`<div class="rci" style="background:${ic.b};color:${ic.c};">${ic.l}</div><span class="rcn">${esc(doc.name)}</span>`; row.appendChild(ch); });
+}
 
-// ═══ VIEWER ═══
-function openV(i){
+// ════════════════════════════════════════
+// FULL SCREEN VIEWER
+// ════════════════════════════════════════
+function showViewerSection(section){
+  ['pdfWrap','imgWrap','embedWrap','viewerLoading'].forEach(id=>$(id).style.display='none');
+  $(section).style.display='flex';
+}
+
+async function openViewer(i){
   cVI = i;
-  const d = docs[i];
-  if(!d) return;
-  const ic = fi(d.ext);
-  $('vIco').style.background = ic.b;
-  $('vIco').style.color = ic.c;
-  $('vIco').textContent = ic.l;
-  $('vNam').textContent = d.name;
-  $('vMet').textContent = (CAT_SHORT[d.category]||'General') + ' • ' + d.docLang.toUpperCase() + ' • ' + fmtDate(d.uploaded) + (d.size>0?' • '+fmtSz(d.size):'');
+  const doc = docs[i];
+  if(!doc) return;
 
-  const b = $('vBdy');
-  const imgExts = ['png','jpg','jpeg','gif','svg','webp'];
-  const fileId = d.id;
+  const ic = fi(doc.ext);
+  $('vHdrIco').style.background = ic.b;
+  $('vHdrIco').style.color = ic.c;
+  $('vHdrIco').textContent = ic.l;
+  $('vHdrName').textContent = doc.name;
+  $('vHdrMeta').textContent = (CAT_SHORT[doc.category]||'General') + ' • ' + doc.docLang.toUpperCase() + ' • ' + fmtDate(doc.uploaded) + (doc.size>0?' • '+fmtSz(doc.size):'');
 
-  if(imgExts.includes(d.ext)){
-    // Image: use thumbnail API
-    b.innerHTML = `<img src="https://drive.google.com/thumbnail?id=${fileId}&sz=w1200" alt="${esc(d.name)}" onerror="this.src='https://drive.google.com/uc?export=view&id=${fileId}'">`;
-  } else if(d.ext==='pdf' || d.mimeType==='application/pdf'){
-    // PDF: embed preview
-    b.innerHTML = `<iframe class="pf" src="https://drive.google.com/file/d/${fileId}/preview" allow="autoplay"></iframe>`;
-  } else if(d.isNative || ['docx','pptx','xlsx','doc','ppt','xls'].includes(d.ext)){
-    // Office / Google Docs: use preview
-    b.innerHTML = `<iframe class="pf" src="https://drive.google.com/file/d/${fileId}/preview" allow="autoplay"></iframe>`;
-  } else {
-    b.innerHTML = `<div class="np"><div class="bi" style="color:${ic.c};font-size:3rem;">${ic.l}</div><h3>Preview Not Available</h3><p style="color:var(--td);font-size:.83rem;margin-top:.5rem;">Click "Open in Drive" or "Download" to access this file.</p><div style="display:flex;gap:8px;justify-content:center;margin-top:1rem;"><button class="btn btn-p" onclick="window.open('${d.viewLink}','_blank')">🔗 Open in Drive</button><button class="btn btn-g" onclick="dlDoc(${i})">⬇ Download</button></div></div>`;
-  }
-
-  $('vDL').onclick = () => dlDoc(i);
-  $('vOver').classList.add('on');
+  $('viewerOverlay').classList.add('on');
   document.body.style.overflow = 'hidden';
   addRec(i);
-}
 
-function clsV(){ $('vOver').classList.remove('on'); document.body.style.overflow=''; $('vPan').classList.remove('fs'); isFS=false; cVI=-1; }
-function clsVOut(e){ if(e.target===$('vOver'))clsV(); }
-function togFS(){ isFS=!isFS; $('vPan').classList.toggle('fs',isFS); }
+  // Reset PDF state
+  pdfDoc = null; curPage = 1; totalPages = 1; curZoom = 1.2;
 
-// ═══ ACTIONS ═══
-function dlDoc(i){
-  const d = docs[i];
-  if(!d) return;
-  // For Google native files, open in Drive for download
-  if(d.isNative){
-    window.open(d.viewLink,'_blank');
-    toast('Opening in Google Drive for download...');
-    return;
-  }
-  // Direct download link
-  const dlUrl = `https://drive.google.com/uc?export=download&id=${d.id}`;
-  const a = document.createElement('a');
-  a.href = dlUrl;
-  a.download = d.name;
-  a.target = '_blank';
-  a.click();
-  toast('Downloading ' + d.name);
-}
-
-function openInDrive(){
-  if(cVI<0) return;
-  const d = docs[cVI];
-  if(d && d.viewLink) window.open(d.viewLink,'_blank');
-}
-
-function prDoc(){
-  if(cVI<0) return;
-  const d = docs[cVI];
-  const w = window.open('','_blank');
-  if(!w) return;
-  const imgExts = ['png','jpg','jpeg','gif','svg','webp'];
-  if(imgExts.includes(d.ext)){
-    w.document.write(`<html><head><title>${esc(d.name)}</title></head><body style="margin:0;display:flex;justify-content:center;align-items:center;min-height:100vh"><img src="https://drive.google.com/thumbnail?id=${d.id}&sz=w1200" style="max-width:100%;max-height:100vh" onload="window.print()"></body></html>`);
+  if(doc.ext === 'pdf' || doc.mimeType === 'application/pdf'){
+    await loadPDF(doc);
+  } else if(isImg(doc.ext)){
+    loadImage(doc);
   } else {
-    w.document.write(`<html><head><title>${esc(d.name)}</title></head><body style="margin:0"><iframe src="https://drive.google.com/file/d/${d.id}/preview" style="width:100%;height:100vh;border:none" onload="window.print()"></iframe></body></html>`);
+    loadEmbed(doc);
   }
-  w.document.close();
 }
+
+// ─── PDF VIEWER ───
+async function loadPDF(doc){
+  showViewerSection('viewerLoading');
+  $('viewerLoading').innerHTML = '<div class="spin"></div><p>Loading PDF...</p>';
+  $('pageNav').style.display = 'flex';
+  $('zoomRow').style.display = 'flex';
+
+  // Use Google Drive direct download URL as PDF source
+  const pdfUrl = `https://drive.google.com/uc?export=download&id=${doc.id}`;
+
+  try {
+    const loadingTask = pdfjsLib.getDocument({
+      url: pdfUrl,
+      withCredentials: false
+    });
+    pdfDoc = await loadingTask.promise;
+    totalPages = pdfDoc.numPages;
+    curPage = 1;
+    showViewerSection('pdfWrap');
+    await renderPage(curPage);
+    updatePageControls();
+    toast(`📄 ${totalPages} page${totalPages!==1?'s':''} loaded`);
+  } catch(err){
+    console.error('PDF load error:', err);
+    // Fallback: use Google Drive embedded preview
+    showViewerSection('embedWrap');
+    $('viewerFrame').src = `https://drive.google.com/file/d/${doc.id}/preview`;
+    $('pageNav').style.display = 'none';
+    $('zoomRow').style.display = 'none';
+    toast('Using embedded preview — some features limited');
+  }
+}
+
+async function renderPage(num){
+  if(!pdfDoc || isRendering) return;
+  isRendering = true;
+  const page = await pdfDoc.getPage(num);
+  const canvas = $('pdfCanvas');
+  const ctx = canvas.getContext('2d');
+
+  // Calculate viewport to fit screen
+  const viewerBody = $('viewerBody');
+  const availW = viewerBody.clientWidth - 40;
+  const availH = viewerBody.clientHeight - 40;
+  const vp = page.getViewport({scale:1});
+  const scaleW = availW / vp.width;
+  const scaleH = availH / vp.height;
+  const fitScale = Math.min(scaleW, scaleH, 2.0);
+  const scale = fitScale * curZoom;
+  const viewport = page.getViewport({scale});
+
+  canvas.width = viewport.width;
+  canvas.height = viewport.height;
+  canvas.style.opacity = '0.6';
+
+  await page.render({canvasContext:ctx, viewport}).promise;
+  canvas.style.opacity = '1';
+  isRendering = false;
+}
+
+async function goPage(n){
+  if(!pdfDoc) return;
+  n = Math.max(1, Math.min(n, totalPages));
+  if(n === curPage) return;
+  curPage = n;
+  await renderPage(curPage);
+  updatePageControls();
+}
+
+function updatePageControls(){
+  $('pageNum').textContent = curPage;
+  $('pageTot').textContent = totalPages;
+  $('btnPrev').disabled = curPage <= 1;
+  $('btnFirst').disabled = curPage <= 1;
+  $('btnNext').disabled = curPage >= totalPages;
+  $('btnLast').disabled = curPage >= totalPages;
+}
+
+async function adjustZoom(delta){
+  curZoom = Math.max(0.3, Math.min(curZoom + delta, 4.0));
+  $('zoomLbl').textContent = Math.round(curZoom * 100 / 1.2) + '%';
+  if(pdfDoc) await renderPage(curPage);
+}
+
+async function fitZoom(){
+  curZoom = 1.2;
+  $('zoomLbl').textContent = '100%';
+  if(pdfDoc) await renderPage(curPage);
+}
+
+// ─── IMAGE VIEWER ───
+function loadImage(doc){
+  showViewerSection('imgWrap');
+  $('pageNav').style.display = 'none';
+  $('zoomRow').style.display = 'none';
+  const img = $('viewerImg');
+  img.src = `https://drive.google.com/thumbnail?id=${doc.id}&sz=w2000`;
+  img.onerror = () => { img.src = `https://lh3.googleusercontent.com/d/${doc.id}`; };
+  img.alt = doc.name;
+}
+
+// ─── EMBED VIEWER (Office, etc.) ───
+function loadEmbed(doc){
+  showViewerSection('embedWrap');
+  $('pageNav').style.display = 'none';
+  $('zoomRow').style.display = 'none';
+  // Use Google Docs viewer for Office files
+  const officeExts = ['docx','doc','xlsx','xls','pptx','ppt'];
+  let src;
+  if(doc.isNative || officeExts.includes(doc.ext)){
+    src = `https://drive.google.com/file/d/${doc.id}/preview`;
+  } else {
+    src = `https://drive.google.com/file/d/${doc.id}/preview`;
+  }
+  $('viewerFrame').src = src;
+}
+
+function closeViewer(){
+  $('viewerOverlay').classList.remove('on');
+  document.body.style.overflow = '';
+  // Clear iframe to stop loading
+  $('viewerFrame').src = '';
+  pdfDoc = null; cVI = -1;
+}
+
+// ═══ DOWNLOAD ═══
+function dlDoc(i){
+  const doc=docs[i]; if(!doc)return;
+  if(doc.isNative){ window.open(doc.viewLink,'_blank'); toast('Opening in Google Drive...'); return; }
+  const a=document.createElement('a');
+  a.href=`https://drive.google.com/uc?export=download&id=${doc.id}`;
+  a.download=doc.name; a.target='_blank'; a.click();
+  toast('Downloading '+doc.name);
+}
+function dlCur(){ if(cVI>=0) dlDoc(cVI); }
 
 // ═══ CONFIG ═══
 function openCfg(){
   $('cfOver').classList.add('on');
-  $('cfN').value = cfg.name;
-  $('cfF').value = cfg.facility;
-  $('cfR').value = cfg.region;
-  $('cfFolderID').value = DRIVE_CONFIG.folderId;
-  $('cfApiKey').value = DRIVE_CONFIG.apiKey;
-  $('cfRefresh').value = String(DRIVE_CONFIG.refreshInterval);
+  $('cfN').value=cfg.name; $('cfF').value=cfg.facility; $('cfR').value=cfg.region;
+  $('cfFolderID').value=DRIVE_CONFIG.folderId; $('cfApiKey').value=DRIVE_CONFIG.apiKey;
+  $('cfRefresh').value=String(DRIVE_CONFIG.refreshInterval);
 }
+let cfg={name:'',facility:'Dallas Plant',region:'Southwest Region'};
 function clsCf(){ $('cfOver').classList.remove('on'); }
 function clsCfOut(e){ if(e.target===$('cfOver'))clsCf(); }
 function saveCfg(){
-  cfg.name = $('cfN').value.trim();
-  cfg.facility = $('cfF').value;
-  cfg.region = $('cfR').value.trim();
-  DRIVE_CONFIG.folderId = $('cfFolderID').value.trim();
-  DRIVE_CONFIG.apiKey = $('cfApiKey').value.trim();
-  DRIVE_CONFIG.refreshInterval = parseInt($('cfRefresh').value)||60;
-  $('driveFolderId').textContent = DRIVE_CONFIG.folderId.substring(0,20)+'...';
-  const sub = cfg.region + ' — ' + cfg.facility;
-  $('staSub').textContent = cfg.name ? cfg.name + ' | ' + sub : sub;
-  clsCf();
-  saveLocal();
-  toast('Config saved — syncing...');
-  syncDrive();
+  cfg.name=$('cfN').value.trim(); cfg.facility=$('cfF').value; cfg.region=$('cfR').value.trim();
+  DRIVE_CONFIG.folderId=$('cfFolderID').value.trim(); DRIVE_CONFIG.apiKey=$('cfApiKey').value.trim();
+  DRIVE_CONFIG.refreshInterval=parseInt($('cfRefresh').value)||60;
+  $('driveFolderId').textContent=DRIVE_CONFIG.folderId.substring(0,22)+'...';
+  const sub=cfg.region+' — '+cfg.facility;
+  $('staSub').textContent=cfg.name?cfg.name+' | '+sub:sub;
+  clsCf(); saveLocal(); toast('Config saved — syncing...'); syncDrive();
 }
 
-// ═══ LOCAL PERSISTENCE (cache only — no doc data) ═══
-const SK = 's1_docstation_gdrive_v1';
-function saveLocal(){
-  try {
-    const p = { recent, cfg, cLang, cFilt, driveConfig: { ...DRIVE_CONFIG } };
-    localStorage.setItem(SK, JSON.stringify(p));
-  } catch(e){ console.warn('Storage limit', e); }
-}
+// ═══ PERSISTENCE ═══
+const SK='s1_docstation_gdrive_v2';
+function saveLocal(){ try{ localStorage.setItem(SK,JSON.stringify({recent,cfg,cLang,cFilt,driveConfig:{...DRIVE_CONFIG}})); }catch(e){} }
 function loadLocal(){
-  try {
-    const r = localStorage.getItem(SK);
-    if(!r) return;
-    const p = JSON.parse(r);
-    if(p.recent) recent = p.recent;
-    if(p.cfg) cfg = { ...cfg, ...p.cfg };
-    if(p.cLang) cLang = p.cLang;
-    if(p.cFilt) cFilt = p.cFilt;
-    if(p.driveConfig){
-      DRIVE_CONFIG.folderId = p.driveConfig.folderId || DRIVE_CONFIG.folderId;
-      DRIVE_CONFIG.apiKey = p.driveConfig.apiKey || DRIVE_CONFIG.apiKey;
-      DRIVE_CONFIG.refreshInterval = p.driveConfig.refreshInterval ?? DRIVE_CONFIG.refreshInterval;
-      DRIVE_CONFIG.folderName = p.driveConfig.folderName || DRIVE_CONFIG.folderName;
-    }
-  } catch(e){ console.warn('Load fail', e); }
+  try{
+    const r=localStorage.getItem(SK); if(!r)return;
+    const p=JSON.parse(r);
+    if(p.recent)recent=p.recent; if(p.cfg)cfg={...cfg,...p.cfg};
+    if(p.cLang)cLang=p.cLang; if(p.cFilt)cFilt=p.cFilt;
+    if(p.driveConfig){ Object.assign(DRIVE_CONFIG,p.driveConfig); }
+  }catch(e){}
 }
 
 // ═══ KEYBOARD ═══
-document.addEventListener('keydown', e => {
-  if(e.key === 'Escape'){ clsV(); clsCf(); }
-  if(e.key === 'F5' || (e.ctrlKey && e.key === 'r')){ e.preventDefault(); syncDrive(); }
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape') closeViewer();
+  if($('viewerOverlay').classList.contains('on')){
+    if(e.key==='ArrowRight'||e.key==='ArrowDown') goPage(curPage+1);
+    if(e.key==='ArrowLeft'||e.key==='ArrowUp') goPage(curPage-1);
+    if(e.key==='Home') goPage(1);
+    if(e.key==='End') goPage(totalPages);
+    if(e.key==='+'||e.key==='=') adjustZoom(0.15);
+    if(e.key==='-') adjustZoom(-0.15);
+  }
 });
 
 // ═══ INIT ═══
 function init(){
   loadLocal();
-  $('lEN').classList.toggle('on', cLang==='en');
-  $('lES').classList.toggle('on', cLang==='es');
-  const sub = cfg.region + ' — ' + cfg.facility;
-  $('staSub').textContent = cfg.name ? cfg.name + ' | ' + sub : sub;
+  $('lEN').classList.toggle('on',cLang==='en');
+  $('lES').classList.toggle('on',cLang==='es');
+  const sub=cfg.region+' — '+cfg.facility;
+  $('staSub').textContent=cfg.name?cfg.name+' | '+sub:sub;
   buildCats();
-  syncDrive(); // Auto-sync on load
+  syncDrive();
 }
 init();
 </script>
