@@ -159,8 +159,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tp);min-h
 .img-wrap img{max-width:100%;max-height:100%;object-fit:contain;box-shadow:0 8px 40px rgba(0,0,0,.6);border-radius:4px}
 
 /* Office/Other embed */
-.embed-wrap{width:100%;height:100%;display:flex!important}
-.embed-wrap iframe{width:100%;height:100%;border:none;display:block}
+.embed-wrap{width:100%;height:100%}
+.embed-wrap iframe{width:100%;height:100%;border:none}
 
 /* Loading state */
 .viewer-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;color:#888}
@@ -424,6 +424,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tp);min-h
 .machine-pill .mpd{width:6px;height:6px;border-radius:50%;background:#22c55e;}
 
 
+
 .toast-c{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:700;display:flex;flex-direction:column;gap:7px;align-items:center}
 .toast{background:var(--blk);border-radius:22px;padding:9px 20px;color:#fff;font-size:.83rem;font-weight:500;box-shadow:var(--sh3);animation:ti .35s ease,to .35s ease 2.5s forwards;white-space:nowrap}
 @keyframes ti{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
@@ -446,7 +447,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tp);min-h
     <div class="hdr-sep"></div>
     <div>
       <div class="hdr-ttl">Document Station</div>
-      <div class="hdr-sub" id="staSub">Southwest Region &mdash; Dallas Plant</div>
+      <div class="hdr-sub" id="staSub">Southwest Region &mdash; Dallas | SRPACK Station</div>
     </div>
   </div>
   <div class="hdr-act">
@@ -528,21 +529,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tp);min-h
     </div>
     <div class="dg" id="dGrid"></div>
   </main>
-</div>
-
-<!-- ═══ MACHINE PICKER ═══ -->
-<div class="msel-overlay" id="mselOverlay" style="display:none;">
-  <div class="msel-hdr">
-    <img class="msel-logo"
-      src="https://www.supplyone.com/wp-content/uploads/2020/10/supplyone-logo-white-red-2024.png"
-      alt="SupplyOne"
-      onerror="this.style.display='none'">
-    <div class="msel-title">Document Station</div>
-    <div class="msel-sub">Southwest Region &mdash; Dallas Plant</div>
-    <div class="msel-prompt">Select your machine to get started</div>
-  </div>
-  <div class="msel-grid" id="mselGrid"></div>
-  <div class="msel-footer">Powered by CPI &nbsp;&bull;&nbsp; Quality · Speed · Reliability</div>
 </div>
 
 <!-- ═══ FULL SCREEN VIEWER ═══ -->
@@ -658,7 +644,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tp);min-h
       <div class="pby-name">CPI</div>
       <div class="pby-tagline">Quality · Speed · Reliability</div>
     </div>
-  </div>
+  <span>Powered by</span>
+  <strong>CPI</strong>
 </div>
 <div class="toast-c" id="toastC"></div>
 
@@ -791,9 +778,8 @@ async function syncDrive(){
   ddot.className='drive-dot'; dst.textContent='Connecting...';
   showSkeletons();
   try {
-    // Recursively fetch ALL files from folder and subfolders
+    // Recursively fetch ALL files including subfolders
     docs = await fetchFolderFiles(DRIVE_CONFIG.folderId);
-    // Sort newest first by default
     docs.sort((a,b)=>new Date(b.uploaded)-new Date(a.uploaded));
 
     icon.classList.remove('sync-spin'); icon.textContent='✅';
@@ -813,7 +799,7 @@ async function syncDrive(){
     dot.className='dot err'; bdg.textContent='Sync Error';
     ddot.className='drive-dot err'; dst.textContent='Connection failed';
     if(docs.length>0){ render(); toast('Showing cached — check connection'); }
-    else { $('dGrid').innerHTML=`<div class="es"><div class="ei">❌</div><h3>Could Not Connect</h3><p>${esc(err.message)}<br><br>Make sure your Google Drive folder AND all subfolders are set to "Anyone with the link can view".</p><button class="btn btn-p" onclick="syncDrive()" style="margin-top:1rem;justify-content:center">🔄 Try Again</button></div>`; }
+    else { $('dGrid').innerHTML=`<div class="es"><div class="ei">❌</div><h3>Could Not Connect</h3><p>${esc(err.message)}<br><br>Make sure your Google Drive folder is set to "Anyone with the link can view".</p><button class="btn btn-p" onclick="syncDrive()" style="margin-top:1rem;justify-content:center">🔄 Try Again</button></div>`; }
   }
 }
 
@@ -895,8 +881,7 @@ function renderRec(){
 // ════════════════════════════════════════
 function showViewerSection(section){
   ['pdfWrap','imgWrap','embedWrap','viewerLoading'].forEach(id=>$(id).style.display='none');
-  // embedWrap and viewerLoading use flex, pdfWrap uses flex, imgWrap uses flex
-  $(section).style.display = 'flex';
+  $(section).style.display='flex';
 }
 
 async function openViewer(i){
@@ -1021,28 +1006,19 @@ function loadEmbed(doc){
   $('viewerLoading').innerHTML = '<div class="spin"></div><p>Loading document...</p>';
   $('pageNav').style.display = 'none';
   $('zoomRow').style.display = 'none';
-
   const officeExts = ['docx','doc','xlsx','xls','pptx','ppt'];
   let src;
-
   if(doc.isNative){
-    // Google native docs - use Drive preview directly
     src = `https://drive.google.com/file/d/${doc.id}/preview`;
   } else if(officeExts.includes(doc.ext)){
-    // Office files - Google Docs Viewer handles these best
     src = `https://docs.google.com/viewer?srcid=${doc.id}&pid=explorer&efh=false&a=v&chrome=false&embedded=true`;
   } else {
-    // Everything else - try Drive preview
     src = `https://drive.google.com/file/d/${doc.id}/preview`;
   }
-
   setTimeout(() => {
     showViewerSection('embedWrap');
     const frame = $('viewerFrame');
     frame.src = src;
-    frame.onload = () => {
-      // Check if frame loaded content or is blank
-    };
   }, 400);
 }
 
@@ -1086,13 +1062,8 @@ function saveCfg(){
 }
 
 // ═══ PERSISTENCE ═══
-const SK='s1_docstation_gdrive_v2';
-function saveLocal(){
-  try{
-    localStorage.setItem(SK,JSON.stringify({recent,cfg,cLang,cFilt,driveConfig:{...DRIVE_CONFIG}}));
-    if(activeMachine) localStorage.setItem('s1_active_machine', JSON.stringify({key:activeMachine.key}));
-  }catch(e){}
-}
+const SK='s1_srpack_station_v1';
+function saveLocal(){ try{ localStorage.setItem(SK,JSON.stringify({recent,cfg,cLang,cFilt,driveConfig:{...DRIVE_CONFIG}})); }catch(e){} }
 function loadLocal(){
   try{
     const r=localStorage.getItem(SK); if(!r)return;
@@ -1116,172 +1087,17 @@ document.addEventListener('keydown',e=>{
   }
 });
 
-
-// ════════════════════════════════════════
-// MACHINE PICKER
-// ════════════════════════════════════════
-const MACHINES = [
-  { key:'serenco',     name:'Serenco',          sub:'FFG Machine',     icon:'⚙️',  color:'rgba(220,38,38,.8)',   folder:'SERENCO'          },
-  { key:'srpack',      name:'SRPACK',            sub:'Specialty Packer', icon:'📦', color:'rgba(37,99,235,.8)',   folder:'SRPACK'           },
-  { key:'langston3',   name:'Langston 3-Color',  sub:'3-Color Printer', icon:'🖨️', color:'rgba(5,150,105,.8)',   folder:'LANGSTON 3-COLOR' },
-  { key:'langston4',   name:'Langston 4-Color',  sub:'4-Color Printer', icon:'🎨', color:'rgba(124,58,237,.8)',  folder:'LANGSTON 4-COLOR' },
-  { key:'jl',          name:'J&L',               sub:'Die Cutter',      icon:'✂️',  color:'rgba(234,88,12,.8)',   folder:'J&L'              },
-  { key:'emba',        name:'EMBA',              sub:'Flexo Folder',    icon:'🏭',  color:'rgba(15,118,110,.8)',  folder:'EMBA'             },
-];
-
-let activeMachine = null;
-
-function buildMachineCards(){
-  const grid = $('mselGrid');
-  grid.innerHTML = '';
-  MACHINES.forEach((m, i) => {
-    const card = document.createElement('div');
-    card.className = 'msel-card';
-    card.style.cssText = `--mc:${m.color};animation-delay:${i * 0.07}s`;
-    card.innerHTML = `
-      <div class="msel-card-icon">${m.icon}</div>
-      <div class="msel-card-name">${m.name}</div>
-      <div class="msel-card-sub">${m.sub}</div>
-    `;
-    card.onclick = () => selectMachine(m);
-    grid.appendChild(card);
-  });
-}
-
-async function selectMachine(m){
-  activeMachine = m;
-
-  // Animate out
-  const overlay = $('mselOverlay');
-  overlay.classList.add('out');
-
-  // Update header subtitle
-  $('staSub').textContent = `Dallas Plant — ${m.name}`;
-
-  // Add switch button to header if not already there
-  if(!$('mswitchBtn')){
-    const btn = document.createElement('button');
-    btn.className = 'mswitch-btn';
-    btn.id = 'mswitchBtn';
-    btn.innerHTML = `⇄ ${m.name}`;
-    btn.onclick = showMachinePicker;
-    // Insert before lang toggle
-    const act = document.querySelector('.hdr-act');
-    act.insertBefore(btn, act.firstChild);
-  } else {
-    $('mswitchBtn').innerHTML = `⇄ ${m.name}`;
-  }
-
-  // Find the machine's subfolder inside the root Drive folder
-  setTimeout(async () => {
-    overlay.style.display = 'none';
-    await loadMachineDocs(m);
-  }, 380);
-
-  saveLocal();
-}
-
-async function loadMachineDocs(m){
-  // Search root folder for a subfolder matching machine name
-  const icon=$('syncIcon'),msg=$('syncMsg');
-  icon.textContent='🔄'; icon.classList.add('sync-spin');
-  msg.textContent = `Loading ${m.name} documents...`;
-  showSkeletons();
-
-  try {
-    const FOLDER_MIME = 'application/vnd.google-apps.folder';
-    const fields = 'files(id,name,mimeType)';
-    const q = encodeURIComponent(`'${DRIVE_CONFIG.folderId}' in parents and trashed=false and mimeType='${FOLDER_MIME}'`);
-    const url = `https://www.googleapis.com/drive/v3/files?q=${q}&key=${DRIVE_CONFIG.apiKey}&fields=${fields}&pageSize=50`;
-    const res = await fetch(url);
-    if(!res.ok) throw new Error('Could not list subfolders');
-    const data = await res.json();
-    const folders = data.files || [];
-
-    // Match by folder name (case-insensitive)
-    const match = folders.find(f =>
-      f.name.toUpperCase().replace(/\s+/g,'') === m.folder.toUpperCase().replace(/\s+/g,'') ||
-      f.name.toUpperCase().includes(m.key.toUpperCase()) ||
-      f.name.toUpperCase() === m.folder.toUpperCase()
-    );
-
-    if(!match){
-      // Fallback — try fetching all files and filter by name pattern
-      throw new Error(`No subfolder found for "${m.name}". Make sure a folder named "${m.folder}" exists in your Drive.`);
-    }
-
-    // Recursively fetch files from the matched subfolder
-    docs = await fetchFolderFiles(match.id);
-    docs.sort((a,b)=>new Date(b.uploaded)-new Date(a.uploaded));
-
-    const now = new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
-    icon.classList.remove('sync-spin'); icon.textContent='✅';
-    msg.innerHTML = `<span class="machine-pill"><span class="mpd"></span>${m.name}</span>&nbsp; ${docs.length} document${docs.length!==1?'s':''} loaded`;
-    $('lastSync').textContent = `Last sync: ${now}`;
-    $('staDot').className='dot'; $('staBdg').textContent='Station Online';
-    $('driveDot').className='drive-dot';
-    $('driveStatus').textContent=`${docs.length} files — ${m.name}`;
-    $('driveFolderName').textContent = m.name;
-
-    render(); updCounts(); renderRec(); saveLocal();
-    startAutoRefresh();
-
-  } catch(err){
-    console.error('Machine load error:', err);
-    icon.classList.remove('sync-spin'); icon.textContent='❌';
-    msg.textContent = err.message;
-    $('staDot').className='dot err'; $('staBdg').textContent='Sync Error';
-    $('dGrid').innerHTML=`<div class="es">
-      <div class="ei">⚠️</div>
-      <h3>Folder Not Found</h3>
-      <p>${esc(err.message)}</p>
-      <p style="margin-top:.5rem;font-size:.75rem;">Check that the subfolder name in Google Drive matches exactly:<br><strong>${m.folder}</strong></p>
-      <button class="btn btn-p" onclick="showMachinePicker()" style="margin-top:1rem;justify-content:center">← Pick Different Machine</button>
-    </div>`;
-  }
-}
-
-function showMachinePicker(){
-  const overlay = $('mselOverlay');
-  overlay.style.display = 'flex';
-  overlay.classList.remove('out');
-  buildMachineCards();
-}
-
-// Override syncDrive to respect active machine
-const _origSyncDrive = syncDrive;
-async function syncDrive(){
-  if(activeMachine){
-    await loadMachineDocs(activeMachine);
-  } else {
-    showMachinePicker();
-  }
-}
-
-
 // ═══ INIT ═══
 function init(){
   loadLocal();
   $('lEN').classList.toggle('on',cLang==='en');
   $('lES').classList.toggle('on',cLang==='es');
+  const sub=cfg.region+' — '+cfg.facility;
+  $('staSub').textContent=cfg.name?cfg.name+' | '+sub:sub;
   buildCats();
-
-  // Check if a machine was previously selected and saved
-  const saved = localStorage.getItem('s1_active_machine');
-  if(saved){
-    try {
-      const m = JSON.parse(saved);
-      const match = MACHINES.find(x=>x.key===m.key);
-      if(match){ selectMachine(match); return; }
-    } catch(e){}
-  }
-
-  // Show machine picker on first load
-  buildMachineCards();
-  const ov=$('mselOverlay');
-  ov.style.cssText='display:flex!important';
+  syncDrive();
 }
-document.addEventListener("DOMContentLoaded", init);
+init();
 </script>
 </body>
 </html>
