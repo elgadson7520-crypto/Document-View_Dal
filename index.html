@@ -743,18 +743,33 @@ function loadImage(doc){
 
 // ─── EMBED VIEWER (Office, etc.) ───
 function loadEmbed(doc){
-  showViewerSection('embedWrap');
+  showViewerSection('viewerLoading');
+  $('viewerLoading').innerHTML = '<div class="spin"></div><p>Loading document...</p>';
   $('pageNav').style.display = 'none';
   $('zoomRow').style.display = 'none';
-  // Use Google Docs viewer for Office files
+
   const officeExts = ['docx','doc','xlsx','xls','pptx','ppt'];
   let src;
-  if(doc.isNative || officeExts.includes(doc.ext)){
+
+  if(doc.isNative){
+    // Google native docs - use Drive preview directly
     src = `https://drive.google.com/file/d/${doc.id}/preview`;
+  } else if(officeExts.includes(doc.ext)){
+    // Office files - Google Docs Viewer handles these best
+    src = `https://docs.google.com/viewer?srcid=${doc.id}&pid=explorer&efh=false&a=v&chrome=false&embedded=true`;
   } else {
+    // Everything else - try Drive preview
     src = `https://drive.google.com/file/d/${doc.id}/preview`;
   }
-  $('viewerFrame').src = src;
+
+  setTimeout(() => {
+    showViewerSection('embedWrap');
+    const frame = $('viewerFrame');
+    frame.src = src;
+    frame.onload = () => {
+      // Check if frame loaded content or is blank
+    };
+  }, 400);
 }
 
 function closeViewer(){
