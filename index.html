@@ -502,6 +502,46 @@ function updClk(){ $('clk').textContent=new Date().toLocaleTimeString('en-US',{h
 setInterval(updClk,1000); updClk();
 
 // ═══ SYNC ═══
+// Fetch all files from a folder (excludes subfolders from doc list but recurses into them)
+async function fetchFolderFiles(folderId, depth=0){
+  const FOLDER_MIME = 'application/vnd.google-apps.folder';
+  const fields = 'files(id,name,size,mimeType,createdTime,modifiedTime,webViewLink,webContentLink)';
+  const q = encodeURIComponent(`'${folderId}' in parents and trashed=false`);
+  const url = `https://www.googleapis.com/drive/v3/files?q=${q}&key=${DRIVE_CONFIG.apiKey}&fields=${fields}&pageSize=200`;
+  const res = await fetch(url);
+  if(!res.ok){ const err=await res.json(); throw new Error(err.error?.message||'Drive API error '+res.status); }
+  const data = await res.json();
+  const items = data.files || [];
+
+  let allFiles = [];
+  const subfolders = [];
+
+  for(const f of items){
+    if(f.mimeType === FOLDER_MIME){
+      // It's a subfolder — recurse into it (max 3 levels deep)
+      if(depth < 3) subfolders.push(f);
+    } else {
+      const fileExt = isNativeDrive(f.mimeType)?(GMIME[f.mimeType]||'docx'):(getExt(f.name)||(GMIME[f.mimeType]||'bin'));
+      allFiles.push({
+        id:f.id, name:f.name, size:parseInt(f.size)||0,
+        mimeType:f.mimeType, ext:fileExt,
+        category:autoCat(f.name), docLang:autoLng(f.name),
+        uploaded:f.modifiedTime||f.createdTime,
+        viewLink:f.webViewLink, dlLink:f.webContentLink,
+        isNative:isNativeDrive(f.mimeType)
+      });
+    }
+  }
+
+  // Recurse into subfolders in parallel
+  if(subfolders.length > 0){
+    const subResults = await Promise.all(subfolders.map(sf => fetchFolderFiles(sf.id, depth+1)));
+    for(const sub of subResults) allFiles = allFiles.concat(sub);
+  }
+
+  return allFiles;
+}
+
 async function syncDrive(){
   const icon=$('syncIcon'),msg=$('syncMsg'),dot=$('staDot'),bdg=$('staBdg'),ddot=$('driveDot'),dst=$('driveStatus');
   icon.classList.add('sync-spin'); icon.textContent='🔄';
@@ -510,18 +550,11 @@ async function syncDrive(){
   ddot.className='drive-dot'; dst.textContent='Connecting...';
   showSkeletons();
   try {
-    const fields='files(id,name,size,mimeType,createdTime,modifiedTime,webViewLink,webContentLink)';
-    const q=encodeURIComponent(`'${DRIVE_CONFIG.folderId}' in parents and trashed=false`);
-    const url=`https://www.googleapis.com/drive/v3/files?q=${q}&key=${DRIVE_CONFIG.apiKey}&fields=${fields}&pageSize=200&orderBy=modifiedTime+desc`;
-    const res=await fetch(url);
-    if(!res.ok){ const err=await res.json(); throw new Error(err.error?.message||'Drive API error '+res.status); }
-    const data=await res.json();
-    docs=(data.files||[]).map(f=>{
-      const fileExt=isNativeDrive(f.mimeType)?(GMIME[f.mimeType]||'docx'):(getExt(f.name)||(GMIME[f.mimeType]||'bin'));
-      return {id:f.id,name:f.name,size:parseInt(f.size)||0,mimeType:f.mimeType,ext:fileExt,
-              category:autoCat(f.name),docLang:autoLng(f.name),uploaded:f.modifiedTime||f.createdTime,
-              viewLink:f.webViewLink,dlLink:f.webContentLink,isNative:isNativeDrive(f.mimeType)};
-    });
+    // Recursively fetch ALL files from folder and subfolders
+    docs = await fetchFolderFiles(DRIVE_CONFIG.folderId);
+    // Sort newest first by default
+    docs.sort((a,b)=>new Date(b.uploaded)-new Date(a.uploaded));
+
     icon.classList.remove('sync-spin'); icon.textContent='✅';
     const now=new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
     msg.textContent=`${docs.length} document${docs.length!==1?'s':''} loaded from Google Drive`;
@@ -539,7 +572,7 @@ async function syncDrive(){
     dot.className='dot err'; bdg.textContent='Sync Error';
     ddot.className='drive-dot err'; dst.textContent='Connection failed';
     if(docs.length>0){ render(); toast('Showing cached — check connection'); }
-    else { $('dGrid').innerHTML=`<div class="es"><div class="ei">❌</div><h3>Could Not Connect</h3><p>${esc(err.message)}<br><br>Check your API key, Folder ID, and make sure the folder is set to "Anyone with the link can view".</p><button class="btn btn-p" onclick="syncDrive()" style="margin-top:1rem;justify-content:center">🔄 Try Again</button></div>`; }
+    else { $('dGrid').innerHTML=`<div class="es"><div class="ei">❌</div><h3>Could Not Connect</h3><p>${esc(err.message)}<br><br>Make sure your Google Drive folder AND all subfolders are set to "Anyone with the link can view".</p><button class="btn btn-p" onclick="syncDrive()" style="margin-top:1rem;justify-content:center">🔄 Try Again</button></div>`; }
   }
 }
 
