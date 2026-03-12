@@ -159,8 +159,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tp);min-h
 .img-wrap img{max-width:100%;max-height:100%;object-fit:contain;box-shadow:0 8px 40px rgba(0,0,0,.6);border-radius:4px}
 
 /* Office/Other embed */
-.embed-wrap{width:100%;height:100%}
-.embed-wrap iframe{width:100%;height:100%;border:none}
+.embed-wrap{width:100%;height:100%;display:flex!important}
+.embed-wrap iframe{width:100%;height:100%;border:none;display:block}
 
 /* Loading state */
 .viewer-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;color:#888}
@@ -621,7 +621,8 @@ function renderRec(){
 // ════════════════════════════════════════
 function showViewerSection(section){
   ['pdfWrap','imgWrap','embedWrap','viewerLoading'].forEach(id=>$(id).style.display='none');
-  $(section).style.display='flex';
+  // embedWrap and viewerLoading use flex, pdfWrap uses flex, imgWrap uses flex
+  $(section).style.display = 'flex';
 }
 
 async function openViewer(i){
@@ -653,36 +654,23 @@ async function openViewer(i){
 }
 
 // ─── PDF VIEWER ───
+// Uses Google Drive embedded preview (avoids CORS restrictions)
 async function loadPDF(doc){
   showViewerSection('viewerLoading');
   $('viewerLoading').innerHTML = '<div class="spin"></div><p>Loading PDF...</p>';
-  $('pageNav').style.display = 'flex';
-  $('zoomRow').style.display = 'flex';
-
-  // Use Google Drive direct download URL as PDF source
-  const pdfUrl = `https://drive.google.com/uc?export=download&id=${doc.id}`;
-
-  try {
-    const loadingTask = pdfjsLib.getDocument({
-      url: pdfUrl,
-      withCredentials: false
-    });
-    pdfDoc = await loadingTask.promise;
-    totalPages = pdfDoc.numPages;
-    curPage = 1;
-    showViewerSection('pdfWrap');
-    await renderPage(curPage);
-    updatePageControls();
-    toast(`📄 ${totalPages} page${totalPages!==1?'s':''} loaded`);
-  } catch(err){
-    console.error('PDF load error:', err);
-    // Fallback: use Google Drive embedded preview
+  // Hide PDF.js nav — Google Drive viewer has its own navigation built in
+  $('pageNav').style.display = 'none';
+  $('zoomRow').style.display = 'none';
+  // Small delay so loading spinner shows
+  setTimeout(() => {
     showViewerSection('embedWrap');
-    $('viewerFrame').src = `https://drive.google.com/file/d/${doc.id}/preview`;
-    $('pageNav').style.display = 'none';
-    $('zoomRow').style.display = 'none';
-    toast('Using embedded preview — some features limited');
-  }
+    const frame = $('viewerFrame');
+    // Use Google Drive preview - works for publicly shared files, shows full PDF with pages
+    frame.src = `https://drive.google.com/file/d/${doc.id}/preview`;
+    frame.onload = () => {
+      toast('📄 PDF ready — use arrow keys inside viewer to navigate pages');
+    };
+  }, 400);
 }
 
 async function renderPage(num){
