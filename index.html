@@ -530,6 +530,21 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tp);min-h
   </main>
 </div>
 
+<!-- ═══ MACHINE PICKER ═══ -->
+<div class="msel-overlay" id="mselOverlay" style="display:none;">
+  <div class="msel-hdr">
+    <img class="msel-logo"
+      src="https://www.supplyone.com/wp-content/uploads/2020/10/supplyone-logo-white-red-2024.png"
+      alt="SupplyOne"
+      onerror="this.style.display='none'">
+    <div class="msel-title">Document Station</div>
+    <div class="msel-sub">Southwest Region &mdash; Dallas Plant</div>
+    <div class="msel-prompt">Select your machine to get started</div>
+  </div>
+  <div class="msel-grid" id="mselGrid"></div>
+  <div class="msel-footer">Powered by CPI &nbsp;&bull;&nbsp; Quality · Speed · Reliability</div>
+</div>
+
 <!-- ═══ FULL SCREEN VIEWER ═══ -->
 <div class="viewer-overlay" id="viewerOverlay">
   <div class="viewer-hdr">
@@ -1263,27 +1278,10 @@ function init(){
 
   // Show machine picker on first load
   buildMachineCards();
-  $('mselOverlay').style.display = 'flex';
+  const ov=$('mselOverlay');
+  ov.style.cssText='display:flex!important';
 }
-init();
+document.addEventListener("DOMContentLoaded", init);
 </script>
-
-<!-- ═══ MACHINE PICKER ═══ -->
-<div class="msel-overlay" id="mselOverlay">
-  <div class="msel-hdr">
-    <img class="msel-logo"
-      src="https://www.supplyone.com/wp-content/uploads/2020/10/supplyone-logo-white-red-2024.png"
-      alt="SupplyOne"
-      onerror="this.style.display='none'">
-    <div class="msel-title">Document Station</div>
-    <div class="msel-sub">Southwest Region &mdash; Dallas Plant</div>
-    <div class="msel-prompt">Select your machine to get started</div>
-  </div>
-
-  <div class="msel-grid" id="mselGrid"></div>
-
-  <div class="msel-footer">Powered by CPI &nbsp;&bull;&nbsp; Quality · Speed · Reliability</div>
-</div>
-
 </body>
 </html>
